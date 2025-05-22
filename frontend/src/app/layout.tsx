@@ -1,15 +1,18 @@
 import type { Metadata } from 'next';
+'use client';
+
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import HealthCheck from '../components/HealthCheck';
+import { Toaster } from 'react-hot-toast';
+import { CartProvider } from '../components/Cart';
+import { AuthSessionProvider } from '../providers/SessionProvider';
+import { metadata } from './metadata';
+import { AuthProvider } from '../context/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'Tacos Bora Bora',
-  description: 'La mejor taquería de la ciudad',
-};
 
 export default function RootLayout({
   children,
@@ -19,11 +22,23 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        <AuthSessionProvider>
+          <AuthProvider>
+            <CartProvider>
+              <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col">
+                  <Navbar />
+                  <HealthCheck />
+                  <Toaster position="top-right" />
+                  <main className="flex-grow">
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+              </div>
+            </CartProvider>
+          </AuthProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

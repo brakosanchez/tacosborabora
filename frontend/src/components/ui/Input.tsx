@@ -3,12 +3,14 @@ import { InputHTMLAttributes } from 'react';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  autoComplete?: string;
 }
 
 export default function Input({
   label,
   error,
   className = '',
+  autoComplete,
   ...props
 }: InputProps) {
   return (
@@ -25,6 +27,7 @@ export default function Input({
           ${className}
         `}
         {...props}
+        autoComplete={autoComplete}
       />
       {error && (
         <p className="text-sm text-red-600">

@@ -1,7 +1,8 @@
-import { CardHTMLAttributes } from 'react';
+import { HTMLAttributes } from 'react';
 
-interface CardProps extends CardHTMLAttributes<HTMLDivElement> {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'primary' | 'secondary';
+  children: React.ReactNode;
 }
 
 export default function Card({

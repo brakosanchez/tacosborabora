@@ -6,12 +6,12 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Tacos Bora Bora"
     
     # MongoDB
-    MONGODB_URI: str = "mongodb://localhost:27017"
-    MONGODB_DB_NAME: str = "tacosborabora"
+    MONGODB_URI: str
+    MONGODB_DB: str
     
     # JWT
-    SECRET_KEY: str = "your-secret-key-here"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str
+    JWT_ALGORITHM: str = "HS256"
     
     # CORS
     BACKEND_CORS_ORIGINS: list[str] = [
@@ -21,7 +21,9 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
+        env_file = ".env"
 
 @lru_cache()
 def get_settings():
     return Settings()
+settings = get_settings()

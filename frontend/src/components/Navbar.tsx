@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
+  const auth = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -23,9 +27,15 @@ export default function Navbar() {
           <Link href="/contacto" className="text-gray-600 hover:text-primary-600">
             Contacto
           </Link>
-          <Link href="/login" className="btn btn-primary">
-            Iniciar Sesión
-          </Link>
+          {auth.isAuthenticated ? (
+            <button onClick={auth.logout} className="btn btn-primary">
+              Cerrar Sesión
+            </button>
+          ) : (
+            <Link href="/login" className="btn btn-primary">
+              Iniciar Sesión
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}

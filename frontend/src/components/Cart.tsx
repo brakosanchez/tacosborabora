@@ -1,6 +1,9 @@
+'use client';
+
 import { useState, createContext, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 interface CartItem {
   id: string;
@@ -18,6 +21,14 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart debe ser usado dentro de un CartProvider');
+  }
+  return context;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
