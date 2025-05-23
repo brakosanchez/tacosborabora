@@ -5,113 +5,345 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
+import { Loader2 } from 'lucide-react'; 
+import Link from 'next/link';
 
 const registerSchema = z.object({
   email: z.string().email('Email inválido').min(1, 'Email es requerido'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-  confirmPassword: z.string().min(1, 'Confirmar contraseña es requerido'),
-  fullName: z.string().min(1, 'Nombre completo es requerido'),
-  role: z.enum(['customer', 'employee', 'admin'])
-}).refine((data) => data.password === data.confirmPassword, {
+  password: z.string()
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
+    .regex(/[a-z]/, 'Debe contener al menos una minúscula')
+    .regex(/[0-9]/, 'Debe contener al menos un número')
+    .regex(/[^A-Za-z0-9]/, 'Debe contener al menos un carácter especial'),
+  confirm_password: z.string().min(1, 'Confirmar contraseña es requerido'),
+  full_name: z.string().min(1, 'Nombre completo es requerido'),
+  phone: z.string()
+    .min(10, 'El teléfono debe tener 10 dígitos')
+    .max(10, 'El teléfono debe tener 10 dígitos')
+    .regex(/^[0-9]+$/, 'El teléfono solo debe contener números'),
+  street_address: z.string().min(5, 'La dirección debe tener al menos 5 caracteres'),
+  neighborhood: z.string().min(3, 'La colonia debe tener al menos 3 caracteres'),
+  allergies: z.array(z.string()).default([]),
+}).refine((data) => data.password === data.confirm_password, {
   message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword']
+  path: ['confirm_password']
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
+  const { register: authRegister } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
+    watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: 'customer',
+      allergies: [],
     },
   });
 
+  const password = watch('password');
+
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
+    setError('');
+    
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          full_name: data.fullName,
-          role: data.role,
-        }),
-      });
+      // Preparar los datos para enviar al servidor
+      const userData = {
+        email: data.email,
+        password: data.password,
+        confirm_password: data.confirm_password,
+        full_name: data.full_name,
+        phone: data.phone,
+        street_address: data.street_address,
+        neighborhood: data.neighborhood,
+        allergies: data.allergies || [],
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Error al registrar usuario');
+      // Usar el método de registro del contexto de autenticación
+      await authRegister(userData);
+      
+      // Mostrar mensaje de éxito
+      toast.success('¡Registro exitoso! Redirigiendo...');
+      
+      // Redirigir al dashboard después de un breve retraso
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1500);
+      
+    } catch (error: any) {
+      console.error('Error en el registro:', error);
+      
+      // Manejar diferentes tipos de errores
+      if (error.response) {
+        // Error de la API
+        const { data, status } = error.response;
+        
+        if (status === 400) {
+          setError('Datos de registro inválidos. Por favor, verifica la información.');
+        } else if (status === 409) {
+          setError('Este correo electrónico ya está registrado.');
+        } else if (status === 422) {
+          // Errores de validación del servidor
+          if (data.detail) {
+            const errorMessages = Array.isArray(data.detail) 
+              ? data.detail.map((err: any) => 
+                  typeof err === 'string' 
+                    ? err 
+                    : err.msg || err.message || JSON.stringify(err)
+                )
+              : [data.detail];
+            
+            setError(errorMessages.join('\n'));
+          } else {
+            setError('Error de validación. Por favor, verifica los datos ingresados.');
+          }
+        } else {
+          setError(`Error del servidor: ${status} ${data.detail || data.message || 'Error desconocido'}`);
+        }
+      } else if (error.request) {
+        // No se recibió respuesta del servidor
+        setError('No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet.');
+      } else {
+        // Error al configurar la solicitud
+        setError(error.message || 'Error al procesar la solicitud');
       }
-
-      toast.success('Registro exitoso');
-      router.push('/login');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Error al registrar usuario');
-      console.error('Error:', error);
+      
+      toast.error('Error al registrar el usuario');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Crear una cuenta
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="rounded-md shadow-sm -space-y-px">
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold tracking-tight">Crear una cuenta</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Ingresa tus datos para crear una cuenta
+        </p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="email">Correo electrónico</Label>
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              {...register('email')}
+              placeholder="correo@ejemplo.com"
+              disabled={loading}
+              className="mt-1"
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email
+              <Label htmlFor="full_name">Nombre completo</Label>
+              <Input
+                id="full_name"
+                type="text"
+                {...register('full_name')}
+                placeholder="Juan Pérez"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.full_name && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.full_name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="phone">Teléfono</Label>
+              <Input
+                id="phone"
+                type="tel"
+                {...register('phone')}
+                placeholder="1234567890"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.phone.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="street_address">Dirección</Label>
+              <Input
+                id="street_address"
+                type="text"
+                {...register('street_address')}
+                placeholder="Calle y número"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.street_address && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.street_address.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="neighborhood">Colonia</Label>
+              <Input
+                id="neighborhood"
+                type="text"
+                {...register('neighborhood')}
+                placeholder="Colonia"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.neighborhood && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.neighborhood.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                {...register('password')}
+                placeholder="••••••••"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.password.message}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Mínimo 8 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="confirm_password">Confirmar contraseña</Label>
+              <Input
+                id="confirm_password"
+                type="password"
+                {...register('confirm_password')}
+                placeholder="••••••••"
+                disabled={loading}
+                className="mt-1"
+              />
+              {errors.confirm_password && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.confirm_password.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="allergies">Alergias (opcional)</Label>
+            <Input
+              id="allergies"
+              type="text"
+              {...register('allergies.0')}
+              placeholder="Ej: Maní, mariscos, etc."
+              disabled={loading}
+              className="mt-1"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Separa las alergias con comas si son varias
+            </p>
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creando cuenta...
+            </>
+          ) : (
+            'Crear cuenta'
+          )}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-muted-foreground">
+        ¿Ya tienes una cuenta?{' '}
+        <Link href="/login" className="font-medium text-primary hover:underline">
+          Inicia sesión
+        </Link>
+      </p>
+            </div>
+            <div>
+              <label htmlFor="neighborhood" className="sr-only">
+                Colonia
               </label>
               <input
-                id="email"
-                type="email"
-                autoComplete="email"
+                id="neighborhood"
+                type="text"
                 required
-                {...register('email')}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Email"
+                {...register('neighborhood')}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                placeholder="Colonia"
               />
-              {errors.email && (
+              {errors.neighborhood && (
                 <p className="mt-1 text-sm text-red-600">
-                  {errors.email.message}
+                  {errors.neighborhood.message}
                 </p>
               )}
             </div>
             <div>
-              <label htmlFor="fullName" className="sr-only">
-                Nombre completo
+              <label htmlFor="allergies" className="sr-only">
+                Alergias (opcional)
               </label>
-              <input
-                id="fullName"
-                type="text"
-                required
-                {...register('fullName')}
+              <select
+                id="allergies"
+                {...register('allergies')}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Nombre completo"
-              />
-              {errors.fullName && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.fullName.message}
-                </p>
-              )}
+              >
+                <option value="">Selecciona una alergia (opcional)</option>
+                <option value="ninguna">Ninguna</option>
+                <option value="cacahuate">Cacahuate</option>
+                <option value="piña">Piña</option>
+              </select>
             </div>
             <div>
               <label htmlFor="password" className="sr-only">

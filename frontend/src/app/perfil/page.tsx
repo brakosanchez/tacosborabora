@@ -1,7 +1,9 @@
+'use client';
+
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { Button } from '../components/ui/Button';
-import { Alert } from '../components/ui/Alert';
+import Button from '@/components/ui/Button';
+import Alert from '@/components/ui/Alert';
 import Link from 'next/link';
 
 export default function Perfil() {

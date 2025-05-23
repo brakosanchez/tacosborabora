@@ -81,7 +81,7 @@ export default function MenuPage() {
               </div>
               <Button
                 onClick={() => handleAddToCart(product)}
-                variant="primary"
+                variant="contained"
               >
                 Agregar al Carrito
               </Button>

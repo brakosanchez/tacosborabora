@@ -1,13 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@300;400;500;600;700&family=Yeseva+One&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+@layer base {
+  :root {
+    /* Colores de la marca */
+    --color-yellow: #FCB235;
+    --color-dark-brown: #462F13;
+    --color-vibrant-red: #EF432E;
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-brick-red: #D04D38;
+    --color-warm-orange: #F68B31;
+    
+    /* Gradientes */
+    --gradient-tropical: linear-gradient(135deg, var(--color-dark-brown) 0%, var(--color-black) 100%);
+    --gradient-fire: linear-gradient(90deg, var(--color-warm-orange), var(--color-vibrant-red));
+  }
+
+  /* Estilos base */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#462F13] text-white font-sans;
+    font-family: 'Unbounded', sans-serif;
+    background-color: var(--color-dark-brown);
+    background-image: url("/tropical-pattern.png");
+    background-attachment: fixed;
+    background-size: 300px;
+    background-blend-mode: overlay;
+    min-height: 100vh;
+  }
+
+  /* Asegurar que el contenido principal ocupe el espacio disponible */
+  #__next {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Estilo para la fuente Bebas Neue */
+  .font-bebas {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* Tipografías */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bebas Neue', sans-serif;
+    @apply tracking-wider;
+    color: var(--color-yellow);
+  }
+
+  h1 {
+    @apply text-5xl md:text-7xl lg:text-8xl;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  h2 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  .subtitle {
+    font-family: 'Yeseva One', serif;
+    @apply text-2xl md:text-3xl text-yellow-400;
+  }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+@layer components {
+  /* Efectos */
+  .fire-effect {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .fire-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(239, 67, 46, 0.2);
+  }
+
+  .fire-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-fire);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .fire-effect:hover::after {
+    opacity: 0.2;
+  }
+
+  /* Componentes personalizados */
+  .btn-primary {
+    @apply bg-[#FCB235] hover:bg-[#e6a030] text-[#462F13] font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-[#FCB235] text-[#FCB235] hover:bg-[#FCB235] hover:text-[#462F13] font-bold py-3 px-6 rounded-full transition-all duration-300;
+  }
+
+  /* Utilidades personalizadas */
+  .container {
+    @apply px-4 md:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  .section {
+    @apply py-16 md:py-24;
+  }
+}
+
+@layer utilities {
+  /* Animaciones */
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .floating {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Temas */
+  [data-theme="dark"] {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 70, 47, 19;
+  }
+
+  [data-theme="light"] {
+    --foreground-rgb: 0, 0, 0;
+    --background-rgb: 255, 255, 255;
+  }
 }

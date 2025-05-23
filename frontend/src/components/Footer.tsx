@@ -2,15 +2,15 @@
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-white">
+    <footer className="bg-dark text-white">
       <div className="container py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Contact Information */}
           <div>
             <h3 className="text-xl font-bold mb-4">Tacos Bora Bora</h3>
-            <p className="mb-2">Calle Principal 123</p>
-            <p className="mb-2">Teléfono: (555) 123-4567</p>
-            <p>Horario: 11:00 AM - 10:00 PM</p>
+            <p className="mb-2">Calle Alondras #410</p>
+            <p className="mb-2">Whatsapp: (55) 4965-5305</p>
+            <p>Horario: Lunes a Domingo: 9:00 AM - 4:00 PM</p>
           </div>
 
           {/* Quick Links */}
@@ -39,7 +39,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4">Horarios</h3>
             <p className="mb-2">Lunes - Domingo</p>
-            <p>11:00 AM - 10:00 PM</p>
+            <p>9:00 AM - 4:00 PM</p>
           </div>
 
           {/* Social Media */}

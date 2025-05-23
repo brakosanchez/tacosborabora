@@ -1,7 +1,9 @@
+'use client';
+
 import { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -24,16 +26,16 @@ export default function ContactPage() {
         {/* Información de contacto */}
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Nuestra Ubicación</h2>
-          <p className="mb-4">Calle Principal 123</p>
-          <p className="mb-4">Ciudad, Estado</p>
+          <p className="mb-4">Calle Alondras #410</p>
+          <p className="mb-4">Nextlalpan, Estado de México</p>
           
           <h2 className="text-xl font-semibold mb-4">Horarios</h2>
           <p className="mb-4">Lunes - Domingo</p>
-          <p className="mb-4">11:00 AM - 10:00 PM</p>
+          <p className="mb-4">9:00 AM - 4:00 PM</p>
           
-          <h2 className="text-xl font-semibold mb-4">Teléfonos</h2>
-          <p className="mb-4">(555) 123-4567</p>
-          <p>(555) 987-6543</p>
+          <h2 className="text-xl font-semibold mb-4">Whatsapp</h2>
+          <p className="mb-4">(55) 4965-5305</p>
+          
         </Card>
 
         {/* Formulario de contacto */}
@@ -61,7 +63,7 @@ export default function ContactPage() {
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               required
             />
-            <Button type="submit" variant="primary" className="w-full">
+            <Button type="submit" variant="contained" className="w-full" sx={{ bgcolor: '#FCB235', '&:hover': { bgcolor: '#e6a030' } }}>
               Enviar Mensaje
             </Button>
           </form>

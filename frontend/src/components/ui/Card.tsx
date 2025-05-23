@@ -14,8 +14,8 @@ export default function Card({
   const baseStyles = 'rounded-lg shadow-sm transition-all duration-200 hover:shadow-md';
 
   const variantStyles = {
-    primary: 'bg-white',
-    secondary: 'bg-gray-50',
+    primary: '',
+    secondary: 'bg-opacity-10',
   };
 
   return (
