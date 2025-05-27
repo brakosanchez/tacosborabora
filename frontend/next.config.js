@@ -13,9 +13,36 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://tacosborabora-backend.vercel.app',
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'your-secret-key-here',
+    NEXTAUTH_DEBUG: process.env.NODE_ENV === 'development' ? '1' : '0',
   },
   // Configuración para exportación estática si es necesario
   output: 'standalone',
+  
+  // Configuración para NextAuth
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
+  },
+  
   // Configuración para internacionalización si es necesario
   i18n: {
     locales: ['es-MX'],

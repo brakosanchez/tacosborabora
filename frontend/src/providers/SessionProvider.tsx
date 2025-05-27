@@ -9,3 +9,5 @@ export function AuthSessionProvider({ children }: { children: React.ReactNode })
     </SessionProvider>
   );
 }
+
+export default AuthSessionProvider;

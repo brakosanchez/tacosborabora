@@ -4,42 +4,93 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import CartModal from '@/components/CartModal';
 import Image from 'next/image';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
+import ProductCard from './components/ProductCard';
+import type { IProduct, ProductCustomization } from './components/ProductCard';
 
 // Types
 type ServiceType = 'dine-in' | 'takeaway' | 'delivery';
 type OrderStep = 'service-type' | 'customer-info' | 'scheduling' | 'menu' | 'review' | 'payment';
 type ProductCategory = 'tacos' | 'bebidas' | 'postres' | 'extras' | 'complementos';
 
-interface TacoCustomization {
-  tortilla: 'maiz' | 'harina';
-  acompanamiento: 'nada' | 'papas' | 'frijoles';
-  queso: boolean;
-  notas?: string;
-}
-
-// Mantener compatibilidad con código existente
-interface ProductCustomization extends TacoCustomization {}
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: ProductCategory;
-  description?: string;
-}
-
-interface CartItem extends Omit<Product, 'description'> {
+interface CartItem extends Omit<IProduct, 'description'> {
   key: string;
   quantity: number;
-  customizations?: TacoCustomization;
+  customizations?: ProductCustomization;
   originalPrice: number;
 }
 
+// Service Type Selector Component
+const ServiceTypeSelector = ({ onSelect }: { onSelect: (type: ServiceType) => void }) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+    {[
+      { type: 'dine-in', icon: '🍽️', title: 'Comer aquí', description: 'Disfruta de nuestros tacos en el local' },
+      { type: 'takeaway', icon: '🥡', title: 'Para llevar', description: 'Recoge tu pedido cuando esté listo' },
+      { type: 'delivery', icon: '🚴', title: 'A domicilio', description: 'Te lo llevamos hasta tu puerta' },
+    ].map((service) => (
+      <button
+        key={service.type}
+        onClick={() => onSelect(service.type as ServiceType)}
+        className="p-6 bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-orange-500/80 hover:border-orange-300/50 transition-all duration-300 flex flex-col items-center transform hover:-translate-y-1 hover:shadow-lg"
+      >
+        <span className="text-4xl mb-3">{service.icon}</span>
+        <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+        <p className="text-white/90 text-sm text-center">{service.description}</p>
+      </button>
+    ))}
+  </div>
+);
+
+// Order Progress Component
+const OrderProgress = ({ currentStep }: { currentStep: OrderStep }) => {
+  const steps: { id: OrderStep; label: string }[] = [
+    { id: 'service-type', label: 'Tipo de servicio' },
+    { id: 'customer-info', label: 'Datos' },
+    { id: 'menu', label: 'Menú' },
+    { id: 'review', label: 'Revisar' },
+    { id: 'payment', label: 'Pagar' },
+  ];
+
+  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mb-8">
+      <div className="flex justify-between relative">
+        {steps.map((step, index) => (
+          <div key={step.id} className="flex flex-col items-center z-10">
+            <div 
+              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                index <= currentStepIndex
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-700 text-gray-400'
+              }`}
+            >
+              {index + 1}
+            </div>
+            <span
+              className={`text-sm mt-2 ${
+                index <= currentStepIndex ? 'text-orange-400' : 'text-gray-500'
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+        ))}
+        <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-700 -z-10">
+          <div
+            className="h-full bg-orange-500 transition-all duration-300"
+            style={{
+              width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Define products data
-// Define all product categories with their respective products
-const productsData: Record<ProductCategory, Product[]> = {
+const productsData: Record<ProductCategory, IProduct[]> = {
   tacos: [
     { 
       id: 'taco-mixiote', 
@@ -256,280 +307,116 @@ const productsData: Record<ProductCategory, Product[]> = {
       description: 'Refresco de cola light/zero de 600ml'
     }
   ],
-  postres: []
-};
-
-export function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: (product: Product, customizations?: ProductCustomization) => void }) {
-  const [customization, setCustomization] = useState<ProductCustomization>({
-    tortilla: 'maiz',
-    acompanamiento: 'nada',
-    queso: false,
-    notas: ''
-  });
-
-  const isTaco = product.category === 'tacos';
-  
-  // Calcular precio basado en personalización
-  const calculatePrice = (basePrice: number, custom: typeof customization) => {
-    let price = basePrice;
-    if (custom.tortilla === 'harina') price += 10;
-    if (custom.queso) price += 10;
-    return price;
-  };
-  
-  const currentPrice = calculatePrice(product.price, customization);
-
-  const handleAddToCart = () => {
-    const finalProduct = {
-      ...product,
-      price: currentPrice // Usar el precio calculado
-    };
-    onAddToCart(
-      finalProduct,
-      isTaco ? {...customization} : undefined
-    );
-  };
-
-  return (
-    <div className="bg-gray-800/80 backdrop-blur-sm p-4 rounded-xl border border-gray-700 hover:border-orange-500/50 transition-all duration-300 flex flex-col h-full">
-      <div className="relative mb-3">
-        <div className="w-full h-24 relative overflow-hidden rounded-lg bg-black/30 mb-2">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="object-contain w-full h-full"
-              onLoad={() => console.log(`Imagen cargada: ${product.name} - ${product.image}`)}
-              onError={(e) => {
-                console.error(`Error cargando imagen: ${product.name} - ${product.image}`);
-                console.error('Elemento que falló:', e.currentTarget);
-              }}
-            />
-          </div>
-        </div>
-        
-        {/* Badge de personalización */}
-        {isTaco && (
-          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
-            Personalizable
-          </div>
-        )}
-      </div>
-      
-      <h3 className="font-bold text-white text-center text-sm">{product.name}</h3>
-      <p className="text-orange-400 font-bold text-lg text-center my-1">${currentPrice}.00</p>
-      
-      {isTaco && (
-        <div className="mt-2 space-y-3">
-          {/* Selección de tortilla */}
-          <div>
-            <div className="grid grid-cols-2 gap-1">
-              {[
-                { type: 'maiz' as const, label: 'Maíz', price: 0 },
-                { type: 'harina' as const, label: 'Harina', price: 10 }
-              ].map(({ type, label, price }) => (
-                <button
-                  key={type}
-                  onClick={() => setCustomization(c => ({ ...c, tortilla: type }))}
-                  className={`p-1 text-xs rounded border transition-all ${
-                    customization.tortilla === type
-                      ? 'border-orange-500 bg-orange-500/10 text-white'
-                      : 'border-gray-700 hover:border-orange-500/50 bg-gray-700/50 text-gray-300'
-                  }`}
-                >
-                  {label} {price > 0 && `+$${price}`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Acompañamiento */}
-          <div>
-            <div className="grid grid-cols-3 gap-1">
-              {[
-                { type: 'nada' as const, label: 'Nada' },
-                { type: 'papas' as const, label: 'Papas' },
-                { type: 'frijoles' as const, label: 'Frijoles' }
-              ].map(({ type, label }) => (
-                <button
-                  key={type}
-                  onClick={() => setCustomization(c => ({ ...c, acompanamiento: type }))}
-                  className={`p-1 text-xs rounded border transition-all ${
-                    customization.acompanamiento === type
-                      ? 'border-orange-500 bg-orange-500/10 text-white'
-                      : 'border-gray-700 hover:border-orange-500/50 bg-gray-700/50 text-gray-300'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Queso extra */}
-          <div className="flex items-center justify-between p-1 rounded-lg bg-gray-700/50 border border-gray-600 text-xs">
-            <span>Queso +$10</span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={customization.queso}
-                onChange={(e) => setCustomization(c => ({ ...c, queso: e.target.checked }))}
-              />
-              <div className="w-8 h-4 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-orange-500"></div>
-            </label>
-          </div>
-
-          {/* Notas */}
-          <div>
-            <input
-              type="text"
-              value={customization.notas || ''}
-              onChange={(e) => setCustomization(c => ({ ...c, notas: e.target.value }))}
-              className="w-full px-2 py-1 text-xs bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-1 focus:ring-orange-500 focus:border-transparent"
-              placeholder="Notas adicionales..."
-            />
-          </div>
-        </div>
-      )}
-
-      <button 
-        onClick={(e) => {
-          e.stopPropagation();
-          handleAddToCart();
-        }}
-        className="mt-3 w-full py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-        </svg>
-        Añadir al carrito
-      </button>
-    </div>
-  );
-};
-
-const ServiceTypeSelector = ({ onSelect }: { onSelect: (type: ServiceType) => void }) => {
-  const serviceTypes: { type: ServiceType; icon: string; title: string; description: string }[] = [
-    { type: 'dine-in', icon: '🍽️', title: 'Comer aquí', description: 'Disfruta de nuestros tacos en el local' },
-    { type: 'takeaway', icon: '🥡', title: 'Para llevar', description: 'Recoge tu pedido cuando esté listo' },
-    { type: 'delivery', icon: '🚴', title: 'A domicilio', description: 'Te lo llevamos hasta tu puerta' },
-  ];
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-      {serviceTypes.map((service) => (
-        <button
-          key={service.type}
-          onClick={() => onSelect(service.type)}
-          className="p-6 bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-orange-500/80 hover:border-orange-300/50 transition-all duration-300 flex flex-col items-center transform hover:-translate-y-1 hover:shadow-lg"
-        >
-          <span className="text-4xl mb-3">{service.icon}</span>
-          <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-          <p className="text-white/90 text-sm text-center">{service.description}</p>
-        </button>
-      ))}
-    </div>
-  );
-};
-
-// Order Progress Component
-const OrderProgress = ({ currentStep }: { currentStep: OrderStep }) => {
-  const steps: { id: OrderStep; label: string }[] = [
-    { id: 'service-type', label: 'Servicio' },
-    { id: 'menu', label: 'Menú' },
-    { id: 'review', label: 'Revisar' },
-    { id: 'payment', label: 'Pagar' },
-  ];
-
-  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
-
-  return (
-    <div className="w-full max-w-3xl mx-auto mb-8">
-      <div className="flex justify-between relative">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex flex-col items-center z-10">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                index <= currentStepIndex
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-gray-700 text-gray-400'
-              }`}
-            >
-              {index + 1}
-            </div>
-            <span
-              className={`text-sm mt-2 ${
-                index <= currentStepIndex ? 'text-orange-400' : 'text-gray-500'
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-        ))}
-        <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-700 -z-10">
-          <div
-            className="h-full bg-orange-500 transition-all duration-300"
-            style={{
-              width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  postres: [
+    { 
+      id: 'chocoflan', 
+      name: 'Chocoflan', 
+      price: 40, 
+      image: '/productos/postres/chocoflan.png', 
+      category: 'postres',
+      description: 'Pastel de chocolate y flan'
+    },
+    { 
+      id: 'torta-de-chocolate', 
+      name: 'Torta de Chocolate', 
+      price: 45, 
+      image: '/productos/postres/tortadechocolate.png', 
+      category: 'postres',
+      description: 'Torta de chocolate para 6 personas'
+    },
+    { 
+      id: 'torta-de-vanilla', 
+      name: 'Torta de Vanilla', 
+      price: 45, 
+      image: '/productos/postres/tortadevanilla.png', 
+      category: 'postres',
+      description: 'Torta de vainilla para 6 personas'
+    }
+  ]
 };
 
 const HazTuPedidoPage = () => {
   // State management
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<OrderStep>('service-type');
   const [serviceType, setServiceType] = useState<ServiceType>('dine-in');
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('tacos');
   const [searchTerm, setSearchTerm] = useState('');
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  
-  // Estilo de fondo
+
+  // Calculate cart total
+  const cartTotal = useMemo(() => 
+    cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+    [cart]
+  );
+
+  // Filter products based on search term
+  const filteredProducts = useMemo(() => {
+    const products = productsData[activeCategory] || [];
+    if (!searchTerm.trim()) return products;
+    
+    const term = searchTerm.toLowerCase();
+    return products.filter(product => 
+      product.name.toLowerCase().includes(term) ||
+      (product.description && product.description.toLowerCase().includes(term))
+    );
+  }, [activeCategory, searchTerm]);
+
+  // Background style
   const backgroundStyle: React.CSSProperties = {
-    backgroundImage: `
-      linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85)),
-      url('/fondoBora.png')
-    `,
+    backgroundImage: "url('/fondoBora.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed',
     minHeight: '100vh',
-    width: '100%',
-    position: 'relative' as const,
+    position: 'relative'
   };
 
-  // Calculate cart total
-  const cartTotal = useMemo(() => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-  }, [cart]);
-
-  // Filter products based on search term and active category
-  const filteredProducts = useMemo(() => {
-    const categoryProducts = productsData[activeCategory] || [];
-    if (!searchTerm.trim()) return categoryProducts;
-    
-    const searchLower = searchTerm.toLowerCase();
-    return categoryProducts.filter(product => 
-      product.name.toLowerCase().includes(searchLower) ||
-      (product.description?.toLowerCase().includes(searchLower) ?? false)
-    );
-  }, [activeCategory, searchTerm]);
+  // Calculate price based on customizations
+  const calculatePrice = (basePrice: number, customizations?: ProductCustomization): number => {
+    if (!customizations) return basePrice;
+    // Add any additional costs from customizations here
+    let total = basePrice;
+    // Example: if (customizations.extraCheese) total += 5;
+    return total;
+  };
 
   // Handle adding item to cart
-  const handleAddToCart = (product: Product, customizations?: ProductCustomization) => {
-    const cartItem: CartItem = {
+  const handleAddToCart = (product: IProduct, customizations?: ProductCustomization) => {
+    const price = calculatePrice(product.price, customizations);
+    const newItem: CartItem = {
       ...product,
       key: `${product.id}-${Date.now()}`,
       quantity: 1,
-      originalPrice: product.price,
       customizations,
+      originalPrice: product.price,
+      price // Use calculated price
     };
-    setCart([...cart, cartItem]);
+    setCart([...cart, newItem]);
+    toast.success(`${product.name} agregado al carrito`);
+  };
+
+  // Render products for the current category
+  const renderProducts = () => {
+    if (filteredProducts.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-gray-400">No se encontraron productos que coincidan con tu búsqueda.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredProducts.map((product) => (
+          <ProductCard 
+            key={product.id} 
+            product={product} 
+            onAddToCart={handleAddToCart} 
+          />
+        ))}
+      </div>
+    );
   };
   return (
     <div className="min-h-screen text-white" style={backgroundStyle}>
@@ -598,16 +485,7 @@ const HazTuPedidoPage = () => {
               />
             </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                />
-              ))}
-            </div>
+            {renderProducts()}
           </div>
         )}
       </div>
