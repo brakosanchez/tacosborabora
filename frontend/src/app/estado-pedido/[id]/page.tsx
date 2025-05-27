@@ -1,8 +1,10 @@
+'use client';
+
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Button } from '../components/ui/Button';
-import { Alert } from '../components/ui/Alert';
-import { Spinner } from '../components/ui/Spinner';
+import Button from '@/components/ui/Button';
+import Alert from '@/components/ui/Alert';
+import Spinner from '@/components/ui/Spinner';
 
 interface OrderStatus {
   id: string;

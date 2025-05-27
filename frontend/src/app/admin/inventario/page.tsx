@@ -1,8 +1,10 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
-import { Input } from '@/components/ui/Input';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
+import Input from '@/components/ui/Input';
 
 interface InventoryItem {
   id: string;
@@ -20,6 +22,7 @@ export default function InventoryPage() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newItem, setNewItem] = useState<Partial<InventoryItem>>({});
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
   useEffect(() => {
     // Aquí iría la lógica para cargar el inventario
@@ -52,6 +55,12 @@ export default function InventoryPage() {
     console.log('Actualizando cantidad:', id, newQuantity);
   };
 
+  const handleEditItem = (item: InventoryItem) => {
+    setEditingItem(item);
+    setNewItem({ ...item });
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="container py-12">
       <div className="flex justify-between items-center mb-8">
@@ -59,9 +68,11 @@ export default function InventoryPage() {
         <Button
           onClick={() => {
             setNewItem({});
+            setEditingItem(null);
             setIsModalOpen(true);
           }}
-          variant="primary"
+          variant="contained"
+          color="primary"
         >
           Agregar Item
         </Button>
@@ -90,15 +101,20 @@ export default function InventoryPage() {
                   onChange={(e) => handleUpdateQuantity(item.id, Number(e.target.value))}
                   className="w-24"
                 />
+                <Button variant="outlined" size="small" onClick={() => handleEditItem(item)}>
+                  Editar
+                </Button>
                 <Button
-                  variant="outline"
+                  variant="outlined"
+                  color="primary"
                   onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                 >
                   +
                 </Button>
                 <Button
-                  variant="outline"
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => handleUpdateQuantity(item.id, Math.max(0, item.quantity - 1))}
                 >
                   -
                 </Button>
@@ -122,7 +138,11 @@ export default function InventoryPage() {
         ))}
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Agregar Item">
+      <Modal isOpen={isModalOpen} onClose={() => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+        setNewItem({});
+      }} title={editingItem ? 'Editar Item' : 'Agregar Item'}>
         <form onSubmit={(e) => {
           e.preventDefault();
           handleAddItem();
@@ -154,8 +174,8 @@ export default function InventoryPage() {
               required
             />
           </div>
-          <Button type="submit" variant="primary">
-            Agregar Item
+          <Button variant="contained" color="primary" type="submit">
+            {editingItem ? 'Actualizar' : 'Agregar'} Producto
           </Button>
         </form>
       </Modal>

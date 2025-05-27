@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
 
 interface Sale {
   id: string;
@@ -15,6 +17,7 @@ interface Sale {
 
 export default function SalesPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [filter, setFilter] = useState<'day' | 'week' | 'month'>('day');
   
   // Simulamos datos de ventas
   const mockSales: Sale[] = [
@@ -65,23 +68,26 @@ export default function SalesPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Reporte de Ventas</h1>
         <div className="flex items-center space-x-4">
-          <Button
-            onClick={() => setSelectedDate(new Date())}
-            variant={selectedDate.toDateString() === new Date().toDateString() ? "primary" : "secondary"}
+          <Button 
+            variant={filter === 'day' ? 'contained' : 'outlined'} 
+            color={filter === 'day' ? 'primary' : 'secondary'}
+            onClick={() => setFilter('day')}
           >
             Hoy
           </Button>
-          <Button
-            onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() - 1)))}
-            variant="outline"
+          <Button 
+            variant={filter === 'week' ? 'contained' : 'outlined'} 
+            color={filter === 'week' ? 'primary' : 'secondary'}
+            onClick={() => setFilter('week')}
           >
-            Anterior
+            Esta Semana
           </Button>
-          <Button
-            onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() + 1)))}
-            variant="outline"
+          <Button 
+            variant={filter === 'month' ? 'contained' : 'outlined'} 
+            color={filter === 'month' ? 'primary' : 'secondary'}
+            onClick={() => setFilter('month')}
           >
-            Siguiente
+            Este Mes
           </Button>
         </div>
       </div>

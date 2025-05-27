@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
 
 interface Order {
   id: string;
@@ -44,6 +46,18 @@ export default function OrdersPage() {
   const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
     // Aquí iría la lógica para actualizar el estado del pedido
     console.log('Actualizando estado del pedido:', orderId, newStatus);
+    setOrders(orders.map(order => 
+      order.id === orderId ? { ...order, status: newStatus } : order
+    ));
+  };
+
+  const handleViewOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleUpdateStatus = (orderId: string, status: Order['status']) => {
+    handleStatusChange(orderId, status);
   };
 
   const getStatusColor = (status: Order['status']) => {
@@ -95,21 +109,44 @@ export default function OrdersPage() {
             <div className="flex justify-between items-center">
               <p className="text-lg font-semibold">Total: ${order.total.toFixed(2)}</p>
               <div className="flex space-x-2">
-                <Button
-                  onClick={() => {
-                    setSelectedOrder(order);
-                    setIsModalOpen(true);
-                  }}
-                  variant="outline"
+                <Button 
+                  variant="outlined" 
+                  size="small" 
+                  onClick={() => handleViewOrder(order)}
+                  className="mr-2"
                 >
-                  Detalles
+                  Ver Detalles
                 </Button>
-                <Button
-                  onClick={() => handleStatusChange(order.id, 'preparing')}
-                  variant="secondary"
-                >
-                  Preparar
-                </Button>
+                {order.status === 'pending' && (
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    size="small" 
+                    onClick={() => handleUpdateStatus(order.id, 'preparing')}
+                  >
+                    En Preparación
+                  </Button>
+                )}
+                {order.status === 'preparing' && (
+                  <Button 
+                    variant="contained" 
+                    color="success" 
+                    size="small" 
+                    onClick={() => handleUpdateStatus(order.id, 'ready')}
+                  >
+                    Marcar como Listo
+                  </Button>
+                )}
+                {order.status === 'ready' && (
+                  <Button 
+                    variant="contained" 
+                    color="secondary" 
+                    size="small" 
+                    onClick={() => handleUpdateStatus(order.id, 'delivered')}
+                  >
+                    Entregar
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

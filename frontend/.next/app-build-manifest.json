@@ -31,10 +31,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/historia/page.js"
     ],
-    "/not-found": [
+    "/contacto/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/not-found.js"
+      "static/chunks/app/contacto/page.js"
     ]
   }
 }
