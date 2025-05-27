@@ -1,3 +1,5 @@
+import Card from "@/components/ui/Card";
+
 export default function HistoryPage() {
   return (
     <div className="container py-12">

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Navbar } from './Navbar';
-import { Footer } from './Footer';
-import { Cart } from './Cart';
-import { MenuHamburguesa } from './MenuHamburguesa';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import { Cart } from './cart/Cart';
+import MenuHamburguesa from './MenuHamburguesa';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();

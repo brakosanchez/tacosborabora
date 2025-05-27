@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '../components/Footer';
 import HealthCheck from '../components/HealthCheck';
 import { Toaster } from 'react-hot-toast';
-import { CartProvider } from '../context/CartContext';
+import { CartProvider } from '@/context/CartContext';
 import { OrderProvider } from '../context/OrderContext';
 import { AuthSessionProvider } from '../providers/SessionProvider';
 import { AuthProvider } from '../context/AuthContext';
@@ -57,17 +57,17 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <CssBaseline />
       <AuthSessionProvider>
         <AuthProvider>
-          <CartProvider>
-            <OrderProvider>
-              <Navbar toggleTheme={toggleTheme} currentTheme={mode} />
+          <OrderProvider>
+            <CartProvider>
+              <Navbar onThemeChange={toggleTheme} currentTheme={mode} />
               <HealthCheck />
               <Toaster position="top-right" />
               <main className="flex-grow">
                 {children}
               </main>
               <Footer />
-            </OrderProvider>
-          </CartProvider>
+            </CartProvider>
+          </OrderProvider>
         </AuthProvider>
       </AuthSessionProvider>
     </ThemeProvider>

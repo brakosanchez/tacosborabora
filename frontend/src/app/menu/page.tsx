@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useCart } from '../../components/Cart';
+import { useCart } from '@/context/CartContext';
 import axios from 'axios';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -18,7 +18,7 @@ interface Product {
 export default function MenuPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,11 +36,12 @@ export default function MenuPage() {
   }, []);
 
   const handleAddToCart = (product: Product) => {
-    addItem({
+    addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       quantity: 1,
+      image: product.image_url
     });
   };
 
