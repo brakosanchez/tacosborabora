@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import CartModal from '@/components/CartModal';
 import Image from 'next/image';
 import { Toaster, toast } from 'react-hot-toast';
-import ProductCard from './components/ProductCard';
-import type { IProduct, ProductCustomization } from './components/ProductCard';
+import ProductCard from '@/app/haz-tu-pedido/components/ProductCard';
+import type { IProduct, ProductCustomization } from '@/app/haz-tu-pedido/components/ProductCard';
 
 // Types
 type ServiceType = 'dine-in' | 'takeaway' | 'delivery';
