@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../lib/api';
+import axios from 'axios';
 
 interface UseFetchOptions<T> {
   initialData?: T;
@@ -11,7 +11,7 @@ export function useFetch<T>(
   url: string,
   options: UseFetchOptions<T> = {}
 ) {
-  const [data, setData] = useState<T>(options.initialData);
+  const [data, setData] = useState<T | undefined>(options.initialData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -19,7 +19,7 @@ export function useFetch<T>(
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(url);
+        const response = await axios.get(url);
         setData(response.data);
         options.onSuccess?.(response.data);
       } catch (err: any) {
