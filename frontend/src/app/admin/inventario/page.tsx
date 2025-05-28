@@ -199,10 +199,7 @@ export default function InventoryPage() {
         setEditingItem(null);
         setNewItem({});
       }} title={editingItem ? 'Editar Item' : 'Agregar Item'}>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          handleAddItem();
-        }} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Nombre"
             value={newItem.name || ''}
