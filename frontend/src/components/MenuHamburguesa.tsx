@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from './ui/Button';
+import Button from './ui/Button';
 
 export default function MenuHamburguesa() {
   const [isOpen, setIsOpen] = useState(false);
