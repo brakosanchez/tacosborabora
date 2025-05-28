@@ -114,13 +114,12 @@ export default function Navbar({ currentTheme, onThemeChange }: NavbarProps) {
             right: 0,
             bottom: 0,
             background: 'rgba(0, 0, 0, 0.95)',
-            display: 'flex',
+            display: { xs: 'flex', md: 'none' },
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'flex-start',
             padding: 4,
-            gap: 2,
-            display: { xs: 'flex', md: 'none' },
+            gap: 2
           }}
         >
           <IconButton
