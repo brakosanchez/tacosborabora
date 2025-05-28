@@ -18,63 +18,119 @@ interface InventoryItem {
   isCritical: boolean;
 }
 
+// Simulamos la carga de datos del inventario
+async function getInventory() {
+  // En una aplicación real, aquí harías una llamada a tu API
+  return [
+    {
+      id: '1',
+      name: 'Tortillas',
+      description: 'Tortillas de maíz',
+      quantity: 50,
+      unit: 'kg',
+      minQuantity: 10,
+      lastPurchasePrice: 25.50,
+      supplier: 'Tortillería La Michoacana',
+      isCritical: false,
+    },
+    // Agrega más ítems según sea necesario
+  ];
+}
+
 export default function InventoryPage() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newItem, setNewItem] = useState<Partial<InventoryItem>>({});
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Aquí iría la lógica para cargar el inventario
-    // Por ahora, simulamos con datos estáticos
-    const mockInventory: InventoryItem[] = [
-      {
-        id: '1',
-        name: 'Carne de Cerdo',
-        description: 'Carne de cerdo para tacos al pastor',
-        quantity: 50,
-        unit: 'kg',
-        minQuantity: 20,
-        lastPurchasePrice: 150,
-        supplier: 'Granja Local',
-        isCritical: false,
-      },
-      // ... más items
-    ];
-    setInventory(mockInventory);
+    // Cargar los datos del inventario
+    const loadInventory = async () => {
+      try {
+        const data = await getInventory();
+        setInventory(data);
+      } catch (error) {
+        console.error('Error al cargar el inventario:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInventory();
   }, []);
 
-  const handleAddItem = async () => {
-    // Aquí iría la lógica para agregar un nuevo item
-    console.log('Agregando nuevo item:', newItem);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-xl font-semibold">Cargando inventario...</div>
+      </div>
+    );
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewItem(prev => ({
+      ...prev,
+      [name]: name === 'quantity' || name === 'minQuantity' || name === 'lastPurchasePrice'
+        ? parseFloat(value) || 0
+        : value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingItem) {
+      setInventory(inventory.map(item => 
+        item.id === editingItem.id ? { ...item, ...newItem } as InventoryItem : item
+      ));
+      setEditingItem(null);
+    } else {
+      const newInventoryItem: InventoryItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: newItem.name || '',
+        description: newItem.description || '',
+        quantity: newItem.quantity || 0,
+        unit: newItem.unit || 'unidad',
+        minQuantity: newItem.minQuantity || 0,
+        lastPurchasePrice: newItem.lastPurchasePrice || 0,
+        supplier: newItem.supplier || '',
+        isCritical: newItem.isCritical || false,
+      };
+      setInventory([...inventory, newInventoryItem]);
+    }
+    setNewItem({});
     setIsModalOpen(false);
   };
 
-  const handleUpdateQuantity = async (id: string, newQuantity: number) => {
-    // Aquí iría la lógica para actualizar la cantidad
-    console.log('Actualizando cantidad:', id, newQuantity);
+  const handleEdit = (item: InventoryItem) => {
+    setEditingItem(item);
+    setNewItem(item);
+    setIsModalOpen(true);
   };
 
-  const handleEditItem = (item: InventoryItem) => {
-    setEditingItem(item);
-    setNewItem({ ...item });
-    setIsModalOpen(true);
+  const handleDelete = (id: string) => {
+    if (confirm('¿Estás seguro de que deseas eliminar este ítem?')) {
+      setInventory(inventory.filter(item => item.id !== id));
+    }
+  };
+
+  const handleUpdateQuantity = async (id: string, newQuantity: number) => {
+    setInventory(inventory.map(item => 
+      item.id === id ? { ...item, quantity: newQuantity } : item
+    ));
   };
 
   return (
     <div className="container py-12">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Inventario</h1>
-        <Button
-          onClick={() => {
-            setNewItem({});
-            setEditingItem(null);
-            setIsModalOpen(true);
-          }}
-          variant="contained"
-          color="primary"
-        >
-          Agregar Item
+        <h1 className="text-3xl font-bold">Gestión de Inventario</h1>
+        <Button onClick={() => {
+          setNewItem({});
+          setEditingItem(null);
+          setIsModalOpen(true);
+        }}>
+          Agregar Producto
         </Button>
       </div>
 
@@ -101,7 +157,7 @@ export default function InventoryPage() {
                   onChange={(e) => handleUpdateQuantity(item.id, Number(e.target.value))}
                   className="w-24"
                 />
-                <Button variant="outlined" size="small" onClick={() => handleEditItem(item)}>
+                <Button variant="outlined" size="small" onClick={() => handleEdit(item)}>
                   Editar
                 </Button>
                 <Button

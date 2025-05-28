@@ -11,6 +11,14 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
+  // Configuración de tiempo de espera para generación estática
+  staticPageGenerationTimeout: 180, // 3 minutos en segundos
+  
+  // Deshabilitar la generación estática para la página de inventario
+  experimental: {
+    isrMemoryCacheSize: 0,
+    staticPageGenerationTimeout: 180, // 3 minutos
+  },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://tacosborabora-backend.vercel.app',
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'http://localhost:3000',
