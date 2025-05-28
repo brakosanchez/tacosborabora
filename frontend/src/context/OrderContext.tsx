@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, ReactNode, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { OrderState, OrderStatus, ServiceType, PaymentMethod, CartItem, TacoCustomization, CustomerInfo } from '@/types/order';
+import { OrderState, OrderStatus, ServiceType, PaymentMethod, CartItem, TacoCustomization, CustomerInfo } from '@/types/Order';
 
 type OrderAction =
   | { type: 'SET_SERVICE_TYPE'; payload: ServiceType }
