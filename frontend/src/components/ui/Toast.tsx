@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert } from './Alert';
+import Alert from './Alert';
 
 interface ToastProps {
   message: string;
