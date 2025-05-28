@@ -1,5 +1,6 @@
 import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import Button from '@/components/ui/Button';
 
 interface ProductCardProps {
   name: string;
@@ -66,16 +67,18 @@ export default function ProductCard({
           ${price.toFixed(2)}
         </StyledPrice>
         {onAddToCart && (
-          <StyledButton>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={onAddToCart}
-              fullWidth
-            >
-              Agregar al carrito
-            </Button>
-          </StyledButton>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onAddToCart}
+            fullWidth
+            sx={{
+              marginTop: '16px',
+              width: '100%'
+            }}
+          >
+            Agregar al carrito
+          </Button>
         )}
       </StyledCardContent>
     </StyledCard>
