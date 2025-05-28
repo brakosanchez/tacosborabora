@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '../lib/api';
+import axios from 'axios';
 
 export function useAuth() {
   const { data: session, status } = useSession();
@@ -10,8 +11,8 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await authApi.login(email, password);
-      const token = response.data.access_token;
+      const response = await authApi.login({ email, password });
+      const token = response.access_token;
       localStorage.setItem('token', token);
       router.push('/');
     } catch (err: any) {
@@ -28,9 +29,9 @@ export function useAuth() {
     }
   };
 
-  const googleLogin = async (token: string) => {
+  const googleLogin = async (googleToken: string) => {
     try {
-      const response = await authApi.googleLogin(token);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/auth/google`, { token: googleToken });
       const token = response.data.access_token;
       localStorage.setItem('token', token);
       router.push('/');
@@ -39,9 +40,9 @@ export function useAuth() {
     }
   };
 
-  const facebookLogin = async (token: string) => {
+  const facebookLogin = async (facebookToken: string) => {
     try {
-      const response = await authApi.facebookLogin(token);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/auth/facebook`, { token: facebookToken });
       const token = response.data.access_token;
       localStorage.setItem('token', token);
       router.push('/');
