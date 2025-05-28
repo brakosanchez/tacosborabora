@@ -1,46 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useCart as useCartContext } from '../context/CartContext';
 import { orderApi } from '../lib/api';
-import { Order, OrderItem } from '../types/Order';
+import { OrderRequest, TacoCustomization } from '../types/Order';
 
-export function useCart() {
-  const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart } = useCartContext();
+interface CartItemWithCustomization {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  customizations?: TacoCustomization;
+}
+
+export function useOrder() {
+  const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, total: cartTotal } = useCartContext();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
-
   const createOrder = async (data: any) => {
     try {
-      const orderData: Order = {
+      const orderData: OrderRequest = {
         ...data,
         items: cartItems.map(item => ({
           productId: item.id,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
-          options: item.options,
+          customizations: (item as CartItemWithCustomization).customizations,
         })),
-        total: calculateTotal(),
+        total: cartTotal,
       };
 
       await orderApi.createOrder(orderData);
       clearCart();
       setSuccess('Pedido creado exitosamente');
+      return { success: true };
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al crear el pedido');
+      return { success: false };
     }
   };
 
   return {
-    cartItems,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    total: calculateTotal(),
     createOrder,
     error,
     success,
