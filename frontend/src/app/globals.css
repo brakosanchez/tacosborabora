@@ -49,6 +49,47 @@
     letter-spacing: 1px;
   }
 
+  /* Estilo para la fuente Yeseva One */
+  .font-yeseva-one {
+    font-family: 'Yeseva One', cursive;
+  }
+
+  /* Estilos personalizados para los select */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FCB235'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  /* Estilo para el menú desplegable */
+  select option {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FCB235;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Estilo para el hover en las opciones */
+  select option:hover,
+  select option:focus,
+  select option:checked {
+    background-color: rgba(249, 115, 22, 0.2);
+    color: #F97316;
+  }
+
+  /* Estilo para el foco en los selects */
+  select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3);
+  }
+
   /* Tipografías */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Bebas Neue', sans-serif;

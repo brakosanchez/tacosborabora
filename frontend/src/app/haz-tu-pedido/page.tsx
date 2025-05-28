@@ -6,11 +6,12 @@ import CartModal from '@/components/CartModal';
 import Image from 'next/image';
 import { Toaster, toast } from 'react-hot-toast';
 import ProductCard from '@/app/haz-tu-pedido/components/ProductCard';
+import DineInOptions from './components/DineInOptions';
 import type { IProduct, ProductCustomization } from '@/app/haz-tu-pedido/components/ProductCard';
 
 // Types
 type ServiceType = 'dine-in' | 'takeaway' | 'delivery';
-type OrderStep = 'service-type' | 'customer-info' | 'scheduling' | 'menu' | 'review' | 'payment';
+type OrderStep = 'service-type' | 'customer-info' | 'scheduling' | 'menu' | 'review' | 'payment' | 'dine-in-options';
 type ProductCategory = 'tacos' | 'bebidas' | 'postres' | 'extras' | 'complementos';
 
 interface CartItem extends Omit<IProduct, 'description'> {
@@ -21,28 +22,44 @@ interface CartItem extends Omit<IProduct, 'description'> {
 }
 
 // Service Type Selector Component
-const ServiceTypeSelector = ({ onSelect }: { onSelect: (type: ServiceType) => void }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-    {[
-      { type: 'dine-in', icon: '🍽️', title: 'Comer aquí', description: 'Disfruta de nuestros tacos en el local' },
-      { type: 'takeaway', icon: '🥡', title: 'Para llevar', description: 'Recoge tu pedido cuando esté listo' },
-      { type: 'delivery', icon: '🚴', title: 'A domicilio', description: 'Te lo llevamos hasta tu puerta' },
-    ].map((service) => (
-      <button
-        key={service.type}
-        onClick={() => onSelect(service.type as ServiceType)}
-        className="p-6 bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-orange-500/80 hover:border-orange-300/50 transition-all duration-300 flex flex-col items-center transform hover:-translate-y-1 hover:shadow-lg"
-      >
-        <span className="text-4xl mb-3">{service.icon}</span>
-        <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-        <p className="text-white/90 text-sm text-center">{service.description}</p>
-      </button>
-    ))}
-  </div>
-);
+const ServiceTypeSelector = ({ 
+  onSelect
+}: { 
+  onSelect: (type: ServiceType) => void;
+}) => {
+  const handleSelect = (type: ServiceType) => {
+    onSelect(type);
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      {[
+        { type: 'dine-in', icon: '🍽️', title: 'Comer aquí', description: 'Disfruta de nuestros tacos en el local' },
+        { type: 'takeaway', icon: '🥡', title: 'Para llevar', description: 'Recoge tu pedido cuando esté listo' },
+        { type: 'delivery', icon: '🚴', title: 'A domicilio', description: 'Te lo llevamos hasta tu puerta' },
+      ].map((service) => (
+        <button
+          key={service.type}
+          onClick={() => handleSelect(service.type as ServiceType)}
+          className="p-6 bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl transition-all duration-300 flex flex-col items-center transform hover:-translate-y-1 hover:shadow-lg hover:bg-orange-500/80 hover:border-orange-300/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        >
+          <span className="text-4xl mb-3">{service.icon}</span>
+          <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+          <p className="text-sm text-center text-white/80">{service.description}</p>
+        </button>
+      ))}
+    </div>
+  );
+};
 
 // Order Progress Component
-const OrderProgress = ({ currentStep }: { currentStep: OrderStep }) => {
+const OrderProgress = ({ 
+  currentStep, 
+  onStepClick 
+}: { 
+  currentStep: OrderStep;
+  onStepClick: (step: OrderStep) => void;
+}) => {
   const steps: { id: OrderStep; label: string }[] = [
     { id: 'service-type', label: 'Tipo de servicio' },
     { id: 'customer-info', label: 'Datos' },
@@ -53,43 +70,86 @@ const OrderProgress = ({ currentStep }: { currentStep: OrderStep }) => {
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
+  // Verificar si un paso está habilitado para hacer clic
+  const isStepEnabled = (stepId: OrderStep) => {
+    const stepIndex = steps.findIndex(step => step.id === stepId);
+    return stepIndex <= currentStepIndex + 1; // Permitir ir al siguiente paso o a cualquiera anterior
+  };
+
+  const handleStepClick = (step: OrderStep) => {
+    if (isStepEnabled(step)) {
+      onStepClick(step);
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto mb-8">
       <div className="flex justify-between relative">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex flex-col items-center z-10">
-            <div 
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                index <= currentStepIndex
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-gray-700 text-gray-400'
-              }`}
+        {steps.map((step, index) => {
+          const isCompleted = index < currentStepIndex;
+          const isActive = index === currentStepIndex;
+          const isClickable = isStepEnabled(step.id);
+          
+          return (
+            <button
+              key={step.id}
+              onClick={() => handleStepClick(step.id)}
+              disabled={!isClickable}
+              className={`flex flex-col items-center z-10 group ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+              aria-label={`Ir a ${step.label}`}
             >
-              {index + 1}
-            </div>
-            <span
-              className={`text-sm mt-2 ${
-                index <= currentStepIndex ? 'text-orange-400' : 'text-gray-500'
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-        ))}
-        <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-700 -z-10">
-          <div
-            className="h-full bg-orange-500 transition-all duration-300"
-            style={{
-              width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
-            }}
-          />
-        </div>
+              <div 
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-orange-500 text-white scale-110' 
+                    : isCompleted 
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-gray-700 text-gray-400'
+                } ${isClickable && !isActive ? 'group-hover:bg-orange-400 group-hover:text-white' : ''}`}
+              >
+                {isCompleted ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <span
+                className={`text-sm mt-2 transition-colors ${
+                  isActive 
+                    ? 'text-orange-400 font-medium' 
+                    : isCompleted 
+                      ? 'text-green-400' 
+                      : 'text-gray-500'
+                } ${isClickable ? 'group-hover:text-orange-300' : ''}`}
+              >
+                {step.label}
+              </span>
+              
+              {/* Línea conectiva */}
+              {index < steps.length - 1 && (
+                <div className="absolute top-4 left-1/2 w-full h-0.5 bg-gray-700 -z-10">
+                  <div
+                    className="h-full bg-orange-500 transition-all duration-300"
+                    style={{
+                      width: index < currentStepIndex ? '100%' : '0%',
+                    }}
+                  />
+                </div>
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 };
 
-// Define products data
+/**
+ * Datos de los productos disponibles, organizados por categoría
+ * Cada producto incluye: id, nombre, descripción, precio, imagen, etc.
+ */
 const productsData: Record<ProductCategory, IProduct[]> = {
   tacos: [
     { 
@@ -335,14 +395,61 @@ const productsData: Record<ProductCategory, IProduct[]> = {
   ]
 };
 
+/**
+ * Página principal para realizar pedidos
+ * 
+ * Maneja el estado global del pedido, incluyendo:
+ * - Tipo de servicio seleccionado
+ * - Productos en el carrito
+ * - Paso actual del flujo
+ * - Datos del cliente
+ * 
+ * @returns {JSX.Element} Componente principal de la página de pedidos
+ */
 const HazTuPedidoPage = () => {
   // State management
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<OrderStep>('service-type');
-  const [serviceType, setServiceType] = useState<ServiceType>('dine-in');
+  const [serviceType, setServiceType] = useState<ServiceType | null>(null);
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('tacos');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Navegar a un paso específico con validaciones
+  const navigateToStep = (step: OrderStep) => {
+    console.log('Navegando a paso:', step, 'Tipo de servicio:', serviceType, 'Paso actual:', currentStep);
+    
+    // Definir los pasos posibles y su orden
+    const steps: OrderStep[] = ['service-type', 'dine-in-options', 'customer-info', 'menu', 'review', 'payment'];
+    
+    // Si el paso actual no está en la lista de pasos, establecerlo como service-type
+    const currentIndex = steps.indexOf(currentStep) >= 0 ? steps.indexOf(currentStep) : 0;
+    const targetIndex = steps.indexOf(step);
+    
+    // Validar que se haya seleccionado un tipo de servicio para ciertos pasos
+    if ((step === 'menu' || step === 'review' || step === 'payment' || step === 'dine-in-options') && !serviceType) {
+      console.log('No se ha seleccionado tipo de servicio');
+      setCurrentStep('service-type');
+      toast.error('Por favor selecciona un tipo de servicio primero');
+      return;
+    }
+    
+    // Manejar la navegación basada en el tipo de servicio
+    if (step === 'menu') {
+      if (serviceType === 'dine-in' && currentStep !== 'dine-in-options') {
+        // Si es comer aquí y no venimos de las opciones de comedor, ir a opciones primero
+        console.log('Redirigiendo a opciones de comedor');
+        setCurrentStep('dine-in-options');
+      } else if (serviceType === 'takeaway' || serviceType === 'delivery' || currentStep === 'dine-in-options') {
+        // Para llevar, a domicilio o si venimos de opciones de comedor, ir al menú
+        console.log('Redirigiendo directamente al menú');
+        setCurrentStep('menu');
+      }
+    } else {
+      console.log('Navegación estándar a:', step);
+      setCurrentStep(step);
+    }
+  };
 
   // Calculate cart total
   const cartTotal = useMemo(() => 
@@ -382,19 +489,28 @@ const HazTuPedidoPage = () => {
   };
 
   // Handle adding item to cart
-  const handleAddToCart = (product: IProduct, customizations?: ProductCustomization) => {
-    const price = calculatePrice(product.price, customizations);
+  const addToCart = (product: IProduct, customizations?: ProductCustomization) => {
+    // Calcular precio adicional por personalizaciones
+    let precioAdicional = 0;
+    if (customizations?.queso) {
+      precioAdicional += 5; // $5 extra por queso
+    }
+    
     const newItem: CartItem = {
       ...product,
       key: `${product.id}-${Date.now()}`,
       quantity: 1,
       customizations,
       originalPrice: product.price,
-      price // Use calculated price
+      price: product.price + precioAdicional // Actualizar precio con extras
     };
+    
     setCart([...cart, newItem]);
     toast.success(`${product.name} agregado al carrito`);
   };
+  
+  // Alias para mantener compatibilidad con componentes existentes
+  const handleAddToCart = addToCart;
 
   // Render products for the current category
   const renderProducts = () => {
@@ -407,20 +523,23 @@ const HazTuPedidoPage = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => (
-          <ProductCard 
-            key={product.id} 
-            product={product} 
-            onAddToCart={handleAddToCart} 
-          />
-        ))}
+      <div className="w-full">
+        <div className="flex flex-wrap justify-center gap-8 p-4">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="w-[350px]">
+              <ProductCard 
+                product={product} 
+                onAddToCart={handleAddToCart} 
+              />
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
   return (
-    <div className="min-h-screen text-white" style={backgroundStyle}>
-      <div className="container mx-auto px-4 py-8 relative z-10">
+    <div className="min-h-screen text-white flex flex-col items-center" style={backgroundStyle}>
+      <div className="w-full max-w-7xl px-4 py-8 relative z-10">
         {/* Header */}
         <header className="mb-8 text-center">
           <motion.h1 
@@ -443,49 +562,137 @@ const HazTuPedidoPage = () => {
 
         {/* Service Type Selection */}
         {currentStep === 'service-type' && (
-          <div className="text-center py-12">
-            <h1 className="text-3xl font-bold mb-8">Selecciona tu tipo de servicio</h1>
-            <ServiceTypeSelector onSelect={(type) => {
-              setServiceType(type);
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-12 px-4"
+          >
+            <h1 className="text-3xl font-bold mb-8">¿Cómo deseas tu pedido?</h1>
+            <ServiceTypeSelector 
+              onSelect={(type) => {
+                console.log('Tipo de servicio seleccionado:', type);
+                setServiceType(type);
+                // Navegar directamente basado en el tipo de servicio
+                if (type === 'dine-in') {
+                  console.log('Navegando a opciones de comedor');
+                  setCurrentStep('dine-in-options');
+                } else {
+                  console.log('Navegando directamente al menú');
+                  setCurrentStep('menu');
+                }
+              }}
+            />
+          </motion.div>
+        )}
+
+        {/* Dine In Options */}
+        {currentStep === 'dine-in-options' && serviceType === 'dine-in' && (
+          <DineInOptions 
+            onNext={() => {
+              console.log('Siguiente desde opciones de comedor');
               setCurrentStep('menu');
-            }} />
-          </div>
+            }}
+            onBack={() => {
+              console.log('Volviendo a selección de servicio');
+              setCurrentStep('service-type');
+            }}
+          />
         )}
 
         {/* Menu */}
         {currentStep === 'menu' && (
-          <div>
-            <OrderProgress currentStep={currentStep} />
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold">Nuestro Menú</h1>
+              {cart.length > 0 && (
+                <button 
+                  onClick={() => navigateToStep('review')}
+                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2"
+                >
+                  <span>Revisar pedido</span>
+                  <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">
+                    {cart.reduce((total, item) => total + item.quantity, 0)}
+                  </span>
+                </button>
+              )}
+            </div>
             
-            {/* Category Tabs */}
+            {/* Pestañas de categorías */}
             <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
               {Object.keys(productsData).map((category) => (
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category as ProductCategory)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-lg whitespace-nowrap ${
                     activeCategory === category
                       ? 'bg-orange-500 text-white'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      : 'bg-black/40 text-white/80 hover:bg-black/60'
                   }`}
                 >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                  {category === 'tacos' ? 'Tacos' : 
+                   category === 'bebidas' ? 'Bebidas' : 
+                   category === 'postres' ? 'Postres' : 
+                   category.charAt(0).toUpperCase() + category.slice(1)}
                 </button>
               ))}
             </div>
 
-            {/* Search */}
-            <div className="mb-6">
+            {/* Barra de búsqueda */}
+            <div className="mb-6 relative">
               <input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full p-3 pl-10 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
+              <svg 
+                className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
 
-            {renderProducts()}
+            {/* Lista de productos */}
+            <div className="w-full">
+              <div className="flex flex-wrap justify-center gap-8 p-4">
+                {filteredProducts.map((product) => (
+                  <div key={product.id} className="w-[350px]">
+                    <ProductCard product={product} onAddToCart={handleAddToCart} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Botón de volver */}
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={() => navigateToStep(serviceType === 'dine-in' ? 'dine-in-options' : 'service-type')}
+                className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Volver
+              </button>
+            </div>
+            
+            {/* Botón flotante para móviles */}
+            {cart.length > 0 && (
+              <div className="fixed bottom-20 left-0 right-0 md:hidden px-4">
+                <button 
+                  onClick={() => navigateToStep('review')}
+                  className="w-full py-3 px-6 bg-orange-500 text-white rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:bg-orange-600 transition-colors"
+                  disabled={cart.length === 0}
+                >
+                  <span>Ver pedido</span>
+                  <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">
+                    {cart.reduce((total, item) => total + item.quantity, 0)} items
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

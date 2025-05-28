@@ -33,14 +33,23 @@ const CartModal: React.FC<CartModalProps> = ({
   onRemoveItem,
   total
 }) => {
+  /**
+   * Formatea las personalizaciones de un producto para mostrarlas en el carrito
+   * @param customizations - Objeto con las personalizaciones del producto
+   * @returns Elemento JSX con las personalizaciones formateadas o null si no hay personalizaciones
+   */
   const getCustomizationDisplay = (customizations?: TacoCustomization) => {
     if (!customizations) return null;
     
+    // Array para acumular las partes de la personalización
     const parts = [];
+    
+    // Agregar cada opción de personalización si está presente
     if (customizations.tortilla === 'harina') parts.push('Tortilla de harina');
     if (customizations.queso) parts.push('Con queso');
     if (customizations.notas) parts.push(`Notas: ${customizations.notas}`);
     
+    // Si hay personalizaciones, mostrarlas separadas por puntos medios
     return parts.length > 0 ? (
       <p className="text-sm text-gray-400 mt-1">{parts.join(' • ')}</p>
     ) : null;
@@ -139,15 +148,19 @@ const CartModal: React.FC<CartModalProps> = ({
                 )}
               </div>
               
+              {/* Sección de total y botón de pago (solo visible si hay ítems) */}
               {cartItems.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-700">
+                  {/* Total de la compra */}
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-medium">Total</span>
                     <span className="text-xl font-bold text-orange-400">${total.toFixed(2)}</span>
                   </div>
+                  
+                  {/* Botón para proceder al pago */}
                   <button
                     onClick={() => {
-                      // Handle checkout
+                      // TODO: Implementar lógica de pago
                       console.log('Proceder al pago');
                     }}
                     className="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"

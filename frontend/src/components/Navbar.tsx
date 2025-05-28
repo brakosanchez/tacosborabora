@@ -24,10 +24,11 @@ export default function Navbar({ onThemeChange, currentTheme }: NavbarProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Elementos del menú de navegación
   const menuItems = [
-    { label: 'Menú', href: '/menu' },
-    { label: 'Historia', href: '/historia' },
-    { label: 'Contacto', href: '/contacto' },
+    { label: 'Menú', href: '/menu' }, // Enlace a la página del menú
+    { label: 'Historia', href: '/historia' }, // Enlace a la página de historia
+    { label: 'Contacto', href: '/contacto' }, // Enlace a la página de contacto
   ];
 
   return (
@@ -118,11 +119,13 @@ export default function Navbar({ onThemeChange, currentTheme }: NavbarProps) {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Menú móvil (solo visible en pantallas pequeñas) */}
       <div 
         className={`md:hidden bg-black/95 shadow-lg transition-all duration-300 overflow-hidden ${
-          mobileMenuOpen ? 'max-h-96 py-4' : 'max-h-0 py-0'
+          mobileMenuOpen ? 'max-h-96 py-4' : 'max-h-0 py-0' // Animación de despliegue/plegado
         }`}
+        id="mobile-menu"
+        aria-hidden={!mobileMenuOpen}
       >
         <div className="container mx-auto px-4 space-y-4">
           {menuItems.map((item) => (
