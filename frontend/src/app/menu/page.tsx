@@ -1,11 +1,21 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import MenuSection from '@/components/menu/MenuSection';
-import MenuItem from '@/components/menu/MenuItem';
-import WavyText from '@/components/ui/WavyText';
-import BoatEffect from '@/components/ui/BoatEffect';
-import React, { useRef } from 'react';
+import dynamic from 'next/dynamic';
+import React, { useRef, Suspense } from 'react';
+
+// Importar componentes con carga dinámica
+const MenuSection = dynamic(() => import('@/components/menu/MenuSection'), { ssr: false });
+const MenuItem = dynamic(() => import('@/components/menu/MenuItem'), { ssr: false });
+const WavyText = dynamic(() => import('@/components/ui/WavyText'), { ssr: false });
+const BoatEffect = dynamic(() => import('@/components/ui/BoatEffect'), { ssr: false });
+
+// Componente de carga
+const Loading = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FCB235]"></div>
+  </div>
+);
 
 interface MenuItemProps {
   name: string;

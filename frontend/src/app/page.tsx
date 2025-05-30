@@ -1,18 +1,34 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React from 'react';
+import { Suspense } from 'react';
+
+// Componente de carga
+const Loading = () => (
+  <div className="min-h-screen flex items-center justify-center bg-dark-brown">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FCB235]"></div>
+  </div>
+);
 
 // Importar componentes con carga dinámica para mejor rendimiento
-const Hero = dynamic(() => import('@/components/Hero'), { ssr: true });
-const FeaturesSection = dynamic(() => import('@/components/home/FeaturesSection'), { ssr: true });
+const Hero = dynamic(() => import('@/components/Hero'), { 
+  ssr: true,
+  loading: () => <Loading />
+});
+
+const FeaturesSection = dynamic(() => import('@/components/home/FeaturesSection'), { 
+  ssr: true,
+  loading: () => <Loading />
+});
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-dark-brown/5 to-white">
-      <Hero />
-      <FeaturesSection />
-    </div>
+    <main className="min-h-screen bg-dark-brown">
+      <Suspense fallback={<Loading />}>
+        <Hero />
+        <FeaturesSection />
+      </Suspense>
+    </main>
   );
 };
 

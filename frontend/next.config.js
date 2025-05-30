@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['@mui/material', '@mui/system', '@mui/icons-material'],
+  compiler: {
+    // Enables the styled-components SWC transform
+    styledComponents: true,
+  },
   
   // Configuración de tiempo de espera para generación estática
   staticPageGenerationTimeout: 180, // 3 minutos en segundos
@@ -22,9 +27,13 @@ const nextConfig = {
   },
 
   // Configuración para exportación estática
-  output: 'export',
-  // Deshabilitar la generación estática de páginas dinámicas
-  dynamicParams: true,
+  output: 'standalone',
+  // Configuración de generación estática
+  staticPageGenerationTimeout: 180, // Aumentar el tiempo de espera a 3 minutos
+  // Configuración de imágenes
+  images: {
+    unoptimized: true, // Desactivar la optimización de imágenes para exportación estáta
+  },
   
   // Configuración de compresión
   compress: true,

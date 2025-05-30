@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@300;400;500;600;700&family=Yeseva+One&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,13 +25,26 @@
 
   body {
     @apply bg-[#462F13] text-white font-sans;
-    font-family: 'Unbounded', sans-serif;
     background-color: var(--color-dark-brown);
     background-image: url("/tropical-pattern.png");
     background-attachment: fixed;
     background-size: 300px;
     background-blend-mode: overlay;
     min-height: 100vh;
+  }
+  
+  /* Clases de fuentes personalizadas */
+  .font-unbounded {
+    font-family: var(--font-unbounded), sans-serif;
+  }
+  
+  .font-bebas {
+    font-family: var(--font-bebas), sans-serif;
+    letter-spacing: 1px;
+  }
+  
+  .font-yeseva {
+    font-family: var(--font-yeseva), serif;
   }
 
   /* Asegurar que el contenido principal ocupe el espacio disponible */

@@ -1,0 +1,176 @@
+/* Estilos específicos para la página de historia */
+
+/* Variables de colores como clases globales */
+.globalVars {
+  --color-yellow: #FCB235;
+  --color-dark-brown: #462F13;
+  --color-red: #EF432E;
+  --color-orange: #F68B31;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  --transition-default: all 0.3s ease;
+}
+
+/* Animaciones personalizadas */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Clases de utilidad */
+.sectionPadding {
+  padding: 4rem 0;
+}
+
+@media (min-width: 768px) {
+  .sectionPadding {
+    padding: 6rem 0;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Estilos para títulos */
+.sectionTitle {
+  font-family: var(--font-bebas);
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-white, #FFFFFF);
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sectionTitle {
+    font-size: 3.75rem;
+  }
+}
+
+.sectionSubtitle {
+  color: var(--color-yellow, #FCB235);
+  font-family: var(--font-yeseva);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .sectionSubtitle {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+/* Estilos para tarjetas */
+.card {
+  background-color: rgba(70, 47, 19, 0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  transition: var(--transition-default, all 0.3s ease);
+}
+
+.card:hover {
+  border-color: rgba(252, 178, 53, 0.3);
+}
+
+.cardHover {
+  transition: var(--transition-default, all 0.3s ease);
+}
+
+.cardHover:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Botones */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-yellow, #FCB235);
+  color: var(--color-dark-brown, #462F13);
+  font-family: var(--font-bebas);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: var(--transition-default, all 0.3s ease);
+}
+
+.btnPrimary:hover {
+  background-color: #f0a720;
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid var(--color-yellow, #FCB235);
+  color: var(--color-yellow, #FCB235);
+  font-family: var(--font-bebas);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: var(--transition-default, all 0.3s ease);
+}
+
+.btnOutline:hover {
+  background-color: rgba(252, 178, 53, 0.1);
+}
+
+/* Elementos decorativos */
+.decorativeCircle {
+  position: absolute;
+  border-radius: 9999px;
+  background-color: var(--color-yellow, #FCB235);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* Efecto de vidrio esmerilado */
+.glassEffect {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animación de flotación */
+.floatAnimation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .sectionTitle {
+    font-size: 2.25rem;
+  }
+  
+  .sectionSubtitle {
+    font-size: 1.125rem;
+  }
+}

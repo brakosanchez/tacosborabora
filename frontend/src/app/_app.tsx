@@ -1,30 +1,26 @@
-import type { Metadata } from 'next'
-import { ThemeProvider } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
-import { theme } from '@/theme'
+'use client';
 
-import '@fontsource/bebas-neue'
-import '@fontsource/yeseva-one'
-import '@fontsource/unbounded'
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '@/theme';
 
-export const metadata: Metadata = {
-  title: 'Tacos Bora Bora',
-  description: 'Isla del Sabor - Tacos de alta calidad en Nextlalpan',
-}
+// Importar estilos de fuentes
+import '@fontsource/bebas-neue/400.css';
+import '@fontsource/yeseva-one/400.css';
+import '@fontsource/unbounded/400.css';
+import '@fontsource/unbounded/500.css';
+import '@fontsource/unbounded/600.css';
+import '@fontsource/unbounded/700.css';
 
-export default function RootLayout({
+export default function MuiProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  )
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
 }

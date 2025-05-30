@@ -4,14 +4,19 @@ import { useState, useEffect, useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, useMediaQuery } from '@mui/material';
 import { lightTheme, darkTheme } from '../theme';
-import Navbar from '@/components/Navbar';
-import Footer from '../components/Footer';
-import HealthCheck from '../components/HealthCheck';
+import dynamic from 'next/dynamic';
 import { Toaster } from 'react-hot-toast';
-import { CartProvider } from '@/context/CartContext';
-import { OrderProvider } from '../context/OrderContext';
-import { AuthSessionProvider } from '../providers/SessionProvider';
-import { AuthProvider } from '../context/AuthContext';
+
+// Importar componentes con carga dinámica
+const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
+const Footer = dynamic(() => import('@/components/Footer'), { ssr: false });
+const HealthCheck = dynamic(() => import('@/components/HealthCheck'), { ssr: false });
+
+// Importar proveedores con carga dinámica
+const CartProvider = dynamic(() => import('@/context/CartContext').then(mod => mod.CartProvider), { ssr: false });
+const OrderProvider = dynamic(() => import('@/context/OrderContext').then(mod => mod.OrderProvider), { ssr: false });
+const AuthSessionProvider = dynamic(() => import('@/providers/SessionProvider').then(mod => mod.AuthSessionProvider), { ssr: false });
+const AuthProvider = dynamic(() => import('@/context/AuthContext').then(mod => mod.AuthProvider), { ssr: false });
 
 type ThemeMode = 'light' | 'dark' | 'system';
 

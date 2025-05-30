@@ -15,6 +15,10 @@ module.exports = {
         'warm-orange': '#F68B31',
         'black': '#000000',
         'white': '#FFFFFF',
+        'bora-yellow': '#FCB235',
+        'bora-brown': '#462F13',
+        'bora-red': '#EF432E',
+        'bora-orange': '#F68B31',
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -29,9 +33,12 @@ module.exports = {
         },
       },
       fontFamily: {
-        'bebas': ['Bebas Neue', 'sans-serif'],
-        'yeseva': ['Yeseva One', 'serif'],
-        'unbounded': ['Unbounded', 'sans-serif'],
+        'bebas': ['var(--font-bebas)', 'sans-serif'],
+        'yeseva': ['var(--font-yeseva)', 'serif'],
+        'unbounded': ['var(--font-unbounded)', 'sans-serif'],
+        sans: ['var(--font-unbounded)', 'sans-serif'],
+        serif: ['var(--font-yeseva)', 'serif'],
+        display: ['var(--font-bebas)', 'sans-serif'],
       },
       backgroundImage: {
         'tropical-pattern': "url('/images/tropical-pattern.png')",
