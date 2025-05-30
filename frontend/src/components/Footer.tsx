@@ -61,7 +61,7 @@ export default function Footer() {
 
               {/* Facebook */}
               <a
-                href="https://www.facebook.com/tacosborabora"
+                href="https://www.facebook.com/profile.php?id=100089760257006"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-blue-600 transition-colors duration-300"
