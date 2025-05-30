@@ -1,54 +1,64 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
 
-export default function HealthCheck() {
-  const [status, setStatus] = useState<string>('checking');
-  const [error, setError] = useState<string>('');
+interface HealthCheckProps {
+  className?: string;
+}
 
-  useEffect(() => {
-    checkHealth();
-  }, []);
+export default function HealthCheck({ className = '' }: HealthCheckProps) {
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [lastCheck, setLastCheck] = useState<Date | null>(null);
 
   const checkHealth = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/health`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setStatus('healthy');
-      toast.success('Conexión exitosa con el backend');
-    } catch (err) {
-      setStatus('unhealthy');
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-      toast.error('No se pudo conectar con el backend');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/health`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
+      
+      setIsOnline(response.ok);
+      setLastCheck(new Date());
+      return response.ok;
+    } catch (error) {
+      console.error('Error checking health:', error);
+      setIsOnline(false);
+      setLastCheck(new Date());
+      return false;
     }
   };
 
+  useEffect(() => {
+    // Verificar al montar
+    checkHealth();
+
+    // Verificar cada 30 segundos
+    const interval = setInterval(checkHealth, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // No mostrar nada hasta la primera verificación
+  if (isOnline === null) return null;
+
   return (
-    <div className="fixed bottom-4 right-4 p-4 bg-white rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-2">Estado de la Conexión</h3>
-      <div className="flex items-center">
-        <div className={`w-4 h-4 rounded-full mr-2 ${
-          status === 'healthy' ? 'bg-green-500' : 
-          status === 'unhealthy' ? 'bg-red-500' : 
-          'bg-yellow-500'
-        }`} />
-        <span className={`font-medium ${
-          status === 'healthy' ? 'text-green-600' : 
-          status === 'unhealthy' ? 'text-red-600' : 
-          'text-yellow-600'
-        }`}>
-          {status === 'healthy' ? 'Conectado' : 
-          status === 'unhealthy' ? 'Desconectado' : 
-          'Verificando...'}
-        </span>
-      </div>
-      {error && (
-        <p className="text-sm text-red-500 mt-2">Error: {error}</p>
-      )}
+    <div 
+      className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 ${className}`}
+      title={lastCheck ? `Última verificación: ${lastCheck.toLocaleTimeString()}` : ''}
+    >
+      <span 
+        className={`w-3 h-3 rounded-full transition-colors ${
+          isOnline ? 'bg-green-500' : 'bg-red-500 animate-pulse'
+        }`}
+      />
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+        {isOnline ? 'Conectado' : 'Sin conexión'}
+      </span>
     </div>
   );
 }
