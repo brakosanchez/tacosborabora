@@ -22,7 +22,9 @@ const nextConfig = {
   },
 
   // Configuración para exportación estática
-  output: 'standalone',
+  output: 'export',
+  // Deshabilitar la generación estática de páginas dinámicas
+  dynamicParams: true,
   
   // Configuración de compresión
   compress: true,
