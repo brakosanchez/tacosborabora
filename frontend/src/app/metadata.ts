@@ -1,4 +1,14 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+
+// Configuración de la vista
+export const viewport: Viewport = {
+  themeColor: '#FCB235',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  userScalable: true,
+};
 
 // Metadatos para la aplicación
 export const defaultMetadata: Metadata = {
@@ -52,8 +62,6 @@ export const defaultMetadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
-  themeColor: '#1a120b',
-  viewport: 'width=device-width, initial-scale=1',
   verification: {
     google: 'tu-codigo-de-verificacion-google',
     yandex: 'tu-codigo-de-verificacion-yandex',

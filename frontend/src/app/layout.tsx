@@ -3,8 +3,10 @@ import { Unbounded, Bebas_Neue, Yeseva_One } from 'next/font/google';
 import './globals.css';
 import dynamic from 'next/dynamic';
 
-// Importar metadatos por defecto
-import { defaultMetadata } from './metadata';
+// Importar metadatos y configuración de vista
+import { defaultMetadata, viewport } from './metadata';
+
+export { viewport };
 
 // Importar proveedores
 import MuiProvider from './_app';
