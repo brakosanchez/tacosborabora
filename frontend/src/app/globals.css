@@ -24,18 +24,25 @@
   }
 
   body {
-    @apply bg-[#462F13] text-white font-sans;
-    background-color: var(--color-dark-brown);
+    background-color: #1a120b;
+    color: #fef9c3; /* yellow-100 */
+    font-family: var(--font-bebas), sans-serif;
     background-image: url("/tropical-pattern.png");
     background-attachment: fixed;
     background-size: 300px;
     background-blend-mode: overlay;
     min-height: 100vh;
+    color-scheme: dark;
+  }
+  
+  /* Forzar modo oscuro en todos los elementos */
+  * {
+    border-color: #1f2937; /* gray-800 */
   }
   
   /* Clases de fuentes personalizadas */
   .font-unbounded {
-    font-family: var(--font-unbounded), sans-serif;
+    font-family: var(--font-bebas), sans-serif;
   }
   
   .font-bebas {
@@ -46,23 +53,16 @@
   .font-yeseva {
     font-family: var(--font-yeseva), serif;
   }
+  
+  .font-yeseva-one {
+    font-family: 'Yeseva One', cursive;
+  }
 
   /* Asegurar que el contenido principal ocupe el espacio disponible */
   #__next {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-  }
-
-  /* Estilo para la fuente Bebas Neue */
-  .font-bebas {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 1px;
-  }
-
-  /* Estilo para la fuente Yeseva One */
-  .font-yeseva-one {
-    font-family: 'Yeseva One', cursive;
   }
 
   /* Estilos personalizados para los select */

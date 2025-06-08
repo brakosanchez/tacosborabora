@@ -230,9 +230,17 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       id: 'mixiote-kilo', 
       name: 'Mixiote por kilo', 
       price: 330, 
-      image: '/productos/kilodemixiote.png', 
+      image: '/productos/mixiote-kilo.jpg',
       category: 'complementos',
-      description: 'Delicioso mixiote de res por kilo'
+      description: 'Delicioso mixiote de res por kilo',
+      sellByWeight: {
+        enabled: true,
+        pricePerKg: 330,
+        minGrams: 500, // Mínimo 500g
+        maxGrams: 2000, // Máximo 2kg
+        step: 100, // Incrementos de 100g
+        showCustomization: false // No mostrar opciones de personalización
+      }
     },
     { 
       id: 'consome-chico', 
@@ -240,7 +248,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 10, 
       image: '/productos/consome.png', 
       category: 'complementos',
-      description: 'Vaso pequeño de consomé'
+      description: 'Vaso pequeño de consomé',
+      allowQuantity: true // Permite seleccionar múltiples unidades
     },
     { 
       id: 'consome-litro', 
@@ -248,7 +257,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 50, 
       image: '/productos/consome-litro.png', 
       category: 'complementos',
-      description: 'Un litro de consomé'
+      description: 'Un litro de consomé',
+      allowQuantity: true // Permite seleccionar múltiples unidades
     },
     { 
       id: 'frijoles-charros', 
@@ -256,7 +266,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 25, 
       image: '/productos/frijoles-charros.png', 
       category: 'complementos',
-      description: 'Porción de frijoles charros'
+      description: 'Porción de frijoles charros',
+      allowQuantity: true // Permite seleccionar múltiples unidades
     }
   ],
   extras: [
@@ -292,7 +303,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/Cocacola.png', 
       category: 'bebidas',
-      description: 'Refresco de cola de 600ml'
+      description: 'Refresco de cola de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'sprite', 
@@ -300,7 +312,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/sprite.png', 
       category: 'bebidas',
-      description: 'Refresco de limón de 600ml'
+      description: 'Refresco de limón de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'fanta', 
@@ -308,7 +321,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/fanta.png', 
       category: 'bebidas',
-      description: 'Refresco de naranja de 600ml'
+      description: 'Refresco de naranja de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'fresca', 
@@ -316,7 +330,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/fresca.png', 
       category: 'bebidas',
-      description: 'Refresco de toronja de 600ml'
+      description: 'Refresco de toronja de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'delaware-punch', 
@@ -324,7 +339,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/delawarepunch.png', 
       category: 'bebidas',
-      description: 'Bebida de frutas de 600ml'
+      description: 'Bebida de frutas de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'boing-mango', 
@@ -332,7 +348,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/logoboing.png', 
       category: 'bebidas',
-      description: 'Bebida de mango de 600ml'
+      description: 'Bebida de mango de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'boing-guayaba', 
@@ -340,7 +357,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/logoboing.png', 
       category: 'bebidas',
-      description: 'Bebida de guayaba de 600ml'
+      description: 'Bebida de guayaba de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'mundet-manzana', 
@@ -348,7 +366,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/mundet.png', 
       category: 'bebidas',
-      description: 'Refresco de manzana de 600ml'
+      description: 'Refresco de manzana de 600ml',
+      allowQuantity: true
     },
     { 
       id: 'topo-chico', 
@@ -356,7 +375,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 25, 
       image: '/productos/Bebidas/logotopochico.png', 
       category: 'bebidas',
-      description: 'Agua mineral gasificada de 500ml'
+      description: 'Agua mineral gasificada de 500ml',
+      allowQuantity: true
     },
     { 
       id: 'coca-light', 
@@ -364,7 +384,8 @@ const productsData: Record<ProductCategory, IProduct[]> = {
       price: 20, 
       image: '/productos/Bebidas/logobelight.png', 
       category: 'bebidas',
-      description: 'Refresco de cola light/zero de 600ml'
+      description: 'Refresco de cola light/zero de 600ml',
+      allowQuantity: true
     }
   ],
   postres: [
@@ -453,7 +474,7 @@ const HazTuPedidoPage = () => {
 
   // Calculate cart total
   const cartTotal = useMemo(() => 
-    cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+    cart.reduce((total, item) => total + item.price, 0),
     [cart]
   );
 
@@ -490,25 +511,184 @@ const HazTuPedidoPage = () => {
 
   // Handle adding item to cart
   const addToCart = (product: IProduct, customizations?: ProductCustomization) => {
-    // Calcular precio adicional por personalizaciones
-    let precioAdicional = 0;
-    if (customizations?.queso) {
-      precioAdicional += 5; // $5 extra por queso
+    // Si ya hay un precio unitario calculado, usarlo directamente
+    if (customizations?.unitPrice !== undefined) {
+      const finalPrice = customizations.unitPrice;
+      const finalQuantity = customizations.quantity || 1;
+      
+      // Para productos por peso, incluir el peso en la clave y el nombre
+      const isWeightedProduct = product.sellByWeight?.enabled && customizations.weightGrams;
+      const itemKey = isWeightedProduct
+        ? `${product.id}-${customizations.weightGrams}g`
+        : `${product.id}-${JSON.stringify(customizations || {})}`;
+      
+      // Crear el nombre del producto con el peso si es necesario
+      const productName = isWeightedProduct
+        ? `${product.name} (${customizations.weightGrams}g)`
+        : product.name;
+      
+      setCart(prevCart => {
+        // Verificar si el producto ya está en el carrito
+        const existingItemIndex = prevCart.findIndex(item => item.key === itemKey);
+        
+        if (existingItemIndex >= 0) {
+          // Si ya existe, actualizar la cantidad y el precio
+          const updatedCart = [...prevCart];
+          const existingItem = updatedCart[existingItemIndex];
+          
+          // Para productos por peso, no sumar cantidades, sino crear un nuevo ítem
+          if (isWeightedProduct) {
+            // Crear una nueva clave única con un timestamp para evitar colisiones
+            const newKey = `${itemKey}-${Date.now()}`;
+            
+            return [
+              ...updatedCart,
+              {
+                ...product,
+                name: productName,
+                key: newKey,
+                quantity: 1, // Siempre 1 para productos por peso
+                price: finalPrice,
+                customizations: customizations,
+                originalPrice: product.price
+              }
+            ];
+          } else {
+            // Para productos normales, incrementar la cantidad y el precio
+            updatedCart[existingItemIndex] = {
+              ...existingItem,
+              quantity: existingItem.quantity + finalQuantity,
+              price: existingItem.price + finalPrice
+            };
+            
+            return updatedCart;
+          }
+        } else {
+          // Si no existe, agregar el nuevo ítem al carrito
+          return [
+            ...prevCart,
+            {
+              ...product,
+              name: productName,
+              key: itemKey,
+              quantity: finalQuantity,
+              price: finalPrice,
+              customizations: customizations,
+              originalPrice: product.price,
+              sellByWeight: product.sellByWeight // Incluir información de venta por peso
+            }
+          ];
+        }
+      });
+      
+      toast.success(`¡${productName} agregado al carrito!`);
+      return;
     }
     
-    const newItem: CartItem = {
-      ...product,
-      key: `${product.id}-${Date.now()}`,
-      quantity: 1,
-      customizations,
-      originalPrice: product.price,
-      price: product.price + precioAdicional // Actualizar precio con extras
+    // Cálculo de precio y cantidad para la compatibilidad con el código existente
+    const calculateFinalValues = () => {
+      let finalPrice = product.price;
+      let finalQuantity = 1;
+      
+      // Si es un producto por peso, calcular el precio basado en el peso
+      if (product.sellByWeight?.enabled && customizations?.weightGrams) {
+        const kg = customizations.weightGrams / 1000;
+        finalPrice = Math.round(kg * product.sellByWeight.pricePerKg * 100) / 100;
+      }
+      // Si hay personalizaciones, aplicar los recargos correspondientes
+      else if (customizations) {
+        if (customizations.tortilla === 'harina') {
+          finalPrice += 10; // $10 extra por tortilla de harina
+        }
+        
+        if (customizations.queso) {
+          finalPrice += 10; // $10 extra por queso
+        }
+        
+        // Si hay una cantidad personalizada, aplicarla
+        if (customizations.quantity) {
+          finalQuantity = customizations.quantity;
+          finalPrice *= finalQuantity;
+        }
+      }
+      
+      return {
+        finalPrice,
+        finalQuantity
+      };
     };
     
-    setCart([...cart, newItem]);
-    toast.success(`${product.name} agregado al carrito`);
+    const { finalPrice, finalQuantity } = calculateFinalValues();
+    
+    // Si hay personalizaciones, clonarlas sin incluir el precio unitario ni la cantidad
+    const { unitPrice, quantity, ...cleanCustomizations } = customizations || {};
+    
+    // Crear una clave única para este ítem en el carrito basada en el ID y las personalizaciones
+    const itemKey = `${product.id}-${JSON.stringify(cleanCustomizations || {})}`;
+    
+    // Para productos que se venden por peso, incluir el peso en la descripción
+    const productName = product.sellByWeight?.enabled && customizations?.weightGrams
+      ? `${product.name} (${customizations.weightGrams}g)`
+      : product.name;
+    
+    setCart(prevCart => {
+      // Verificar si el producto ya está en el carrito
+      const existingItemIndex = prevCart.findIndex(item => item.key === itemKey);
+      
+      if (existingItemIndex >= 0) {
+        // Si ya existe, actualizar la cantidad y el precio
+        const updatedCart = [...prevCart];
+        const existingItem = updatedCart[existingItemIndex];
+        
+        // Para productos por peso, no sumar cantidades, sino crear un nuevo ítem
+        if (product.sellByWeight?.enabled) {
+          // Crear una nueva clave única con un timestamp para evitar colisiones
+          const newKey = `${itemKey}-${Date.now()}`;
+          
+          return [
+            ...updatedCart,
+            {
+              ...product,
+              name: productName,
+              key: newKey,
+              quantity: 1, // Siempre 1 para productos por peso
+              price: finalPrice,
+              customizations: cleanCustomizations,
+              originalPrice: product.price,
+              sellByWeight: product.sellByWeight
+            }
+          ];
+        } else {
+          // Para productos normales, incrementar la cantidad y el precio
+          updatedCart[existingItemIndex] = {
+            ...existingItem,
+            quantity: existingItem.quantity + finalQuantity,
+            price: existingItem.price + finalPrice
+          };
+          
+          return updatedCart;
+        }
+      } else {
+        // Si no existe, agregar el nuevo ítem al carrito
+        return [
+          ...prevCart,
+          {
+            ...product,
+            name: productName,
+            key: itemKey,
+            quantity: finalQuantity,
+            price: finalPrice,
+            customizations: cleanCustomizations,
+            originalPrice: product.price, // Guardar el precio original para futuras actualizaciones
+            sellByWeight: product.sellByWeight // Incluir información de venta por peso
+          }
+        ];
+      }
+    });
+    
+    toast.success(`${productName} agregado al carrito`);
   };
-  
+
   // Alias para mantener compatibilidad con componentes existentes
   const handleAddToCart = addToCart;
 
@@ -702,10 +882,28 @@ const HazTuPedidoPage = () => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cartItems={cart}
-        onUpdateQuantity={(id, quantity) => {
-          setCart(cart.map(item => 
-            item.key === id ? { ...item, quantity: Math.max(1, quantity) } : item
-          ));
+        onUpdateQuantity={(id, newQuantity) => {
+          setCart(cart.map(item => {
+            if (item.key !== id) return item;
+            
+            // Calcular el precio unitario basado en el precio original y las personalizaciones
+            let unitPrice = item.originalPrice;
+            
+            // Aplicar cargos adicionales de personalizaciones
+            if (item.customizations) {
+              if (item.customizations.queso) unitPrice += 10;
+              if (item.customizations.tortilla === 'harina') unitPrice += 10;
+            }
+            
+            // Asegurarse de que la cantidad sea al menos 1
+            const quantity = Math.max(1, newQuantity);
+            
+            return {
+              ...item,
+              quantity,
+              price: unitPrice * quantity
+            };
+          }));
         }}
         onRemoveItem={(id) => {
           setCart(cart.filter(item => item.key !== id));

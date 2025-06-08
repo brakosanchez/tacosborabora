@@ -36,7 +36,7 @@ class JWTBearer(HTTPBearer):
 
 # Configuración de seguridad
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 # Funciones de utilidad
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -74,27 +74,41 @@ def create_access_token(
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     """Obtiene el usuario actual a partir del token JWT"""
+    print(f"[DEBUG] get_current_user - Token recibido: {token[:10]}...")  # Mostrar solo los primeros 10 caracteres del token
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="No se pudieron validar las credenciales",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
     try:
+        print("[DEBUG] Intentando decodificar el token...")
         payload = jwt.decode(
             token, 
             settings.JWT_SECRET, 
             algorithms=[settings.JWT_ALGORITHM]
         )
+        print(f"[DEBUG] Payload decodificado: {payload}")
+        
         email: str = payload.get("sub")
         if email is None:
+            print("[ERROR] No se encontró el campo 'sub' en el token")
             raise credentials_exception
+            
+        print(f"[DEBUG] Buscando usuario con email: {email}")
+        user = await User.find_one(User.email == email)
+        
+        if user is None:
+            print(f"[ERROR] No se encontró el usuario con email: {email}")
+            raise credentials_exception
+            
+        print(f"[DEBUG] Usuario encontrado: {user.email}, activo: {user.is_active}")
+        return user
+        
     except JWTError as e:
+        print(f"[ERROR] Error al decodificar el token: {str(e)}")
         raise credentials_exception from e
-    
-    user = await User.find_one(User.email == email)
-    if user is None:
-        raise credentials_exception
-    return user
 
 async def get_current_active_user(
     current_user: User = Depends(get_current_user)

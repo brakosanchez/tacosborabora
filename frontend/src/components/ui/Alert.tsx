@@ -8,15 +8,15 @@ export default function Alert({ type, message, onClose }: AlertProps) {
   const getAlertClass = (type: AlertProps['type']) => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-green-900/30 text-green-200 border-green-800';
       case 'error':
-        return 'bg-red-50 text-red-700 border-red-200';
+        return 'bg-red-900/30 text-red-200 border-red-800';
       case 'warning':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+        return 'bg-yellow-900/30 text-yellow-200 border-yellow-800';
       case 'info':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-blue-900/30 text-blue-200 border-blue-800';
       default:
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-blue-900/30 text-blue-200 border-blue-800';
     }
   };
 
@@ -83,7 +83,7 @@ export default function Alert({ type, message, onClose }: AlertProps) {
         {onClose && (
           <button
             type="button"
-            className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-500 rounded-lg focus:ring-2 focus:ring-primary-400 p-1.5 inline-flex h-8 w-8"
+            className="ml-auto -mx-1.5 -my-1.5 bg-[#1a120b] text-gray-400 hover:text-yellow-100 rounded-lg focus:ring-2 focus:ring-yellow-500 p-1.5 inline-flex h-8 w-8"
             onClick={onClose}
           >
             <span className="sr-only">Cerrar</span>

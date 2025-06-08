@@ -5,7 +5,7 @@ export default function AContrarreloj() {
   return (
     <section className="py-16 bg-gradient-to-b from-dark-brown/90 to-dark-brown text-white relative overflow-hidden">
       {/* Fondo con textura sutil */}
-      <div className="absolute inset-0 bg-[url('/texture.png')] opacity-5" />
+      <div className="absolute inset-0 bg-[url('/images/texture.png')] opacity-5" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col lg:flex-row-reverse items-center gap-12">

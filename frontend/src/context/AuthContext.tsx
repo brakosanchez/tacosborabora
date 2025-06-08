@@ -5,35 +5,95 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 // Configuración global de axios
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.0.16:8000';
-// Aseguramos que la URL base termine con /api
-let normalizedBaseURL = baseURL.endsWith('/') ? baseURL.slice(0, -1) : baseURL;
-if (!normalizedBaseURL.endsWith('/api')) {
-  normalizedBaseURL = `${normalizedBaseURL}/api`;
-}
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tacosborabora.com';
+// Aseguramos que la URL base no tenga una barra al final
+const normalizedBaseURL = baseURL.endsWith('/') ? baseURL.slice(0, -1) : baseURL;
+
+console.log('URL base de la API:', normalizedBaseURL);
 
 // Configuración global de Axios
 axios.defaults.withCredentials = true;
-console.log('API Base URL:', normalizedBaseURL); // Para depuración
 
 const api = axios.create({
-  baseURL: normalizedBaseURL,
+  baseURL: `${normalizedBaseURL}/api`, // Asegurarse de que la ruta base incluya /api
+  withCredentials: true,
+  timeout: 15000, // 15 segundos de timeout
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
   },
-  withCredentials: true,
+  validateStatus: function (status) {
+    return status >= 200 && status < 500; // Aceptar códigos de estado 2xx y 4xx como respuestas válidas
+  }
 });
+
+// Interceptor para loggear las peticiones
+api.interceptors.request.use(
+  (config) => {
+    console.log('Iniciando petición:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      data: config.data
+    });
+    return config;
+  },
+  (error) => {
+    console.error('Error en la petición:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para loggear las respuestas
+api.interceptors.response.use(
+  (response) => {
+    console.log('Respuesta recibida:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data,
+      headers: response.headers
+    });
+    return response;
+  },
+  (error) => {
+    console.error('Error en la respuesta:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores de red
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('La solicitud ha excedido el tiempo de espera');
+      throw new Error('La solicitud está tardando demasiado. Por favor, verifica tu conexión a internet.');
+    }
+    if (!error.response) {
+      console.error('Error de red o servidor no disponible:', error);
+      throw new Error('No se pudo conectar al servidor. Por favor, verifica tu conexión a internet.');
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Interceptor para agregar el token a las solicitudes
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    // Obtener el token del localStorage o de la sesión
     const token = localStorage.getItem('token');
+    
+    // Si hay un token, agregarlo al header de autorización
     if (token) {
-      // Solo agregar el token si no es la solicitud de login
-      if (!config.url?.includes('/auth/login')) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Asegurarse de que las credenciales estén habilitadas
+    config.withCredentials = true;
+    
     return config;
   },
   (error) => {
@@ -110,6 +170,11 @@ export interface User {
   created_at: string;
   updated_at: string;
   last_login?: string;
+  gender?: 'male' | 'female' | 'other';
+  phone?: string;
+  street_address?: string;
+  neighborhood?: string;
+  allergies?: string[];
 }
 
 interface AuthContextType {
@@ -124,6 +189,7 @@ interface AuthContextType {
     phone: string;
     street_address: string;
     neighborhood: string;
+    gender: 'male' | 'female' | 'other';
     allergies: string[];
   }) => Promise<void>;
   logout: () => Promise<void>;
@@ -244,15 +310,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone: string;
     street_address: string;
     neighborhood: string;
+    gender: 'male' | 'female' | 'other';
     allergies: string[];
   }) => {
     try {
       setLoading(true);
       const response = await api.post('/api/auth/register', {
-        ...userData,
-        confirm_password: userData.password, // Asegurarse de que coincidan las contraseñas
+        email: userData.email,
+        password: userData.password,
+        full_name: userData.full_name,
+        phone: userData.phone,
+        street_address: userData.street_address,
+        neighborhood: userData.neighborhood,
+        gender: userData.gender,
+        allergies: userData.allergies,
       });
-
       // Iniciar sesión automáticamente después del registro
       await login(userData.email, userData.password);
     } catch (error) {

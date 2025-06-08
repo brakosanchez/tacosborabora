@@ -19,8 +19,23 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container py-12">
-      <h1 className="text-3xl font-bold mb-8">Contáctanos</h1>
+    <div className="relative min-h-screen py-12">
+      {/* Fondo con blur */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-fixed bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/fondoborabora.png)',
+            filter: 'blur(8px)',
+            transform: 'scale(1.1)'
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        </div>
+      </div>
+      
+      <div className="container relative z-10">
+        <h1 className="text-3xl font-bold mb-8 text-white">Contáctanos</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Información de contacto */}
@@ -67,7 +82,8 @@ export default function ContactPage() {
               Enviar Mensaje
             </Button>
           </form>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

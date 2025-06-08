@@ -1,25 +1,20 @@
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Dict, Any, List
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response, Header
 from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, HTTPBearer
 from fastapi.encoders import jsonable_encoder
-from jose import JWTError
+from jose import JWTError, jwt
 from pydantic import EmailStr
+
 from app.core.config import settings
 from app.models.user import User, UserRole
-from app.schemas.user import UserCreate, UserInDB, User as UserResponse
-from app.core.security import (
-    get_password_hash,
-    verify_password,
-    create_access_token,
-    get_current_user,
-    get_current_active_user,
-    JWTBearer
-)
-from app.core.config import settings
+from app.schemas.token import Token, UserLogin, UserCreate, UserResponse
+from app.dependencies import get_current_user, get_current_active_user, RoleChecker, is_admin
+from app.core.security import get_password_hash, verify_password, create_access_token
 from app.db.mongodb import get_database
-router = APIRouter(tags=["auth"])
+
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login")
 async def login(
@@ -167,18 +162,27 @@ async def register(user_data: UserCreate) -> Dict[str, Any]:
     
     # Crear el nuevo usuario
     try:
-        hashed_password = get_password_hash(user_data.password)
-        user_dict = user_data.dict(exclude={"password", "confirm_password"})
+        # Asegurarse de que las alergias no sean nulas
+        allergies = user_data.allergies or []
         
-        # Crear el usuario en la base de datos
-        user = User(
-            **user_dict,
-            hashed_password=hashed_password,
-            is_active=True,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
-        )
+        # Crear el diccionario de usuario
+        user_dict = {
+            "email": user_data.email,
+            "full_name": user_data.full_name,
+            "phone": user_data.phone,
+            "street_address": user_data.street_address,
+            "neighborhood": user_data.neighborhood,
+            "allergies": allergies if allergies != ['ninguna'] else [],
+            "gender": user_data.gender,
+            "role": user_data.role or "customer",
+            "hashed_password": get_password_hash(user_data.password),
+            "is_active": True,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
         
+        # Crear y guardar el usuario
+        user = User(**user_dict)
         await user.save()
         
         # Devolver los datos del usuario sin la contraseña
@@ -186,7 +190,9 @@ async def register(user_data: UserCreate) -> Dict[str, Any]:
         
     except Exception as e:
         print(f"Error en registro: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error al registrar el usuario. Por favor, intente de nuevo más tarde."
+            detail=f"Error al registrar el usuario: {str(e)}"
         )

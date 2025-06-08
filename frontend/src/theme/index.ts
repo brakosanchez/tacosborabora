@@ -71,30 +71,55 @@ export function createCustomTheme(mode: PaletteMode): Theme {
       ...(isDark ? darkPalette : lightPalette),
     },
     typography: {
-      fontFamily: `'Bebas Neue', 'Yeseva One', 'Unbounded', 'Arial', sans-serif`,
+      fontFamily: `'Bebas Neue', 'Yeseva One', 'Arial', sans-serif`,
       h1: {
         fontFamily: 'Bebas Neue',
         fontWeight: 700,
         fontSize: '2.5rem',
+        letterSpacing: '1px',
       },
       h2: {
-        fontFamily: 'Yeseva One',
+        fontFamily: 'Bebas Neue',
         fontWeight: 700,
         fontSize: '2rem',
+        letterSpacing: '0.5px',
       },
       h3: {
-        fontFamily: 'Unbounded',
+        fontFamily: 'Bebas Neue',
         fontWeight: 600,
         fontSize: '1.75rem',
+        letterSpacing: '0.5px',
+      },
+      h4: {
+        fontFamily: 'Bebas Neue',
+        fontWeight: 600,
+        letterSpacing: '0.5px',
+      },
+      h5: {
+        fontFamily: 'Bebas Neue',
+        fontWeight: 500,
+        letterSpacing: '0.5px',
+      },
+      h6: {
+        fontFamily: 'Bebas Neue',
+        fontWeight: 500,
+        letterSpacing: '0.5px',
       },
       body1: {
-        fontFamily: 'Unbounded',
+        fontFamily: 'Bebas Neue',
         fontWeight: 400,
+        letterSpacing: '0.5px',
+      },
+      body2: {
+        fontFamily: 'Bebas Neue',
+        fontWeight: 400,
+        letterSpacing: '0.5px',
       },
       button: {
         fontFamily: 'Bebas Neue',
         fontWeight: 700,
         textTransform: 'uppercase' as const,
+        letterSpacing: '1px',
       },
     },
     components: {

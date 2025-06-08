@@ -2,7 +2,7 @@
 
 export default function Footer() {
   return (
-    <footer className="bg-dark text-white">
+    <footer className="bg-[#1a120b] text-yellow-100">
       <div className="container py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Contact Information */}

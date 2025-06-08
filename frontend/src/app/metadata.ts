@@ -45,6 +45,28 @@ export const defaultMetadata: Metadata = {
     images: ['/og-image.jpg'],
     creator: '@tacosborabora',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png', sizes: 'any' },
+      { url: '/favicon.ico', type: 'image/x-icon', sizes: 'any' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+    ],
+    // Configuración para iOS/Safari
+    apple: [
+      { url: '/LogoSoloBora.png', sizes: '180x180', type: 'image/png' },
+    ],
+    // Otras configuraciones de íconos
+    other: [
+      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#FCB235' },
+      { rel: 'shortcut icon', url: '/favicon.ico' },
+      // Forzar el uso de LogoSoloBora.png para apple-touch-icon
+      { rel: 'apple-touch-icon', url: '/LogoSoloBora.png', sizes: '180x180' },
+      { rel: 'apple-touch-icon-precomposed', url: '/LogoSoloBora.png', sizes: '180x180' },
+      // Agregar un enlace directo para apple-touch-icon.png
+      { rel: 'apple-touch-icon', url: '/apple-touch-icon.png', sizes: '180x180' },
+    ],
+  },
   robots: {
     index: true,
     follow: true,
@@ -55,11 +77,6 @@ export const defaultMetadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
   verification: {

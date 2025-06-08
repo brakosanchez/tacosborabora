@@ -16,8 +16,31 @@ const DineInOptions: React.FC<DineInOptionsProps> = ({ onNext, onBack }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (orderNow === null) return;
+    
+    // Validar que la hora esté dentro del rango permitido (9 AM - 4 PM)
+    if (reservationTime) {
+      const [hours] = reservationTime.split(':').map(Number);
+      if (hours < 9 || hours >= 16) {
+        alert('Por favor, selecciona una hora entre las 9:00 AM y las 4:00 PM');
+        return;
+      }
+    }
+    
     onNext();
   };
+  
+  // Generar opciones de hora de 9 AM a 4 PM
+  const timeOptions = [];
+  for (let hour = 9; hour < 16; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) { // Opciones cada 30 minutos
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      timeOptions.push(
+        <option key={timeString} value={timeString}>
+          {`${hour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}`}
+        </option>
+      );
+    }
+  }
 
   return (
     <motion.div 
@@ -30,13 +53,15 @@ const DineInOptions: React.FC<DineInOptionsProps> = ({ onNext, onBack }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-2">Hora de llegada</label>
-          <input
-            type="time"
+          <select
             value={reservationTime}
             onChange={(e) => setReservationTime(e.target.value)}
             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             required
-          />
+          >
+            <option value="">Selecciona una hora</option>
+            {timeOptions}
+          </select>
         </div>
         
         <div>

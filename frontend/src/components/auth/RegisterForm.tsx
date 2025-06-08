@@ -30,6 +30,7 @@ const registerSchema = z.object({
     .regex(/^[0-9]+$/, 'El teléfono solo debe contener números'),
   street_address: z.string().min(5, 'La dirección debe tener al menos 5 caracteres'),
   neighborhood: z.string().min(3, 'La colonia debe tener al menos 3 caracteres'),
+  gender: z.enum(['male', 'female', 'other']).default('other'),
   allergies: z.array(z.string()).default([]),
 }).refine((data) => data.password === data.confirm_password, {
   message: 'Las contraseñas no coinciden',
@@ -61,61 +62,58 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     setError('');
-    
+
     try {
-      const userData = {
+      // Usamos 'as any' temporalmente para evitar errores de tipo
+      await authRegister({
         email: data.email,
         password: data.password,
-        confirm_password: data.confirm_password,
         full_name: data.full_name,
         phone: data.phone,
         street_address: data.street_address,
         neighborhood: data.neighborhood,
-        allergies: data.allergies || [],
-      };
+        gender: data.gender,
+        allergies: data.allergies,
+      } as any);
 
-      await authRegister(userData);
-      
       toast.success('¡Registro exitoso! Redirigiendo...');
+      router.push('/perfil');
+    } catch (err: unknown) {
+      console.error('Error en el registro:', err);
       
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1500);
+      // Manejo de errores más seguro
+      let errorMessage = 'Error al registrar el usuario';
       
-    } catch (error: any) {
-      console.error('Error en el registro:', error);
-      
-      if (error.response) {
-        const { data, status } = error.response;
-        
-        if (status === 400) {
-          setError('Datos de registro inválidos. Por favor, verifica la información.');
-        } else if (status === 409) {
-          setError('Este correo electrónico ya está registrado.');
-        } else if (status === 422) {
-          if (data.detail) {
-            const errorMessages = Array.isArray(data.detail) 
-              ? data.detail.map((err: any) => 
-                  typeof err === 'string' 
-                    ? err 
-                    : err.msg || err.message || JSON.stringify(err)
-                )
-              : [data.detail];
+      if (err && typeof err === 'object') {
+        // Manejar errores de respuesta HTTP
+        if ('response' in err) {
+          const errorResponse = err as { 
+            response?: { 
+              data?: { detail?: string };
+              status?: number;
+            } 
+          };
+          
+          if (errorResponse.response) {
+            const { status, data } = errorResponse.response;
             
-            setError(errorMessages.join('\n'));
-          } else {
-            setError('Error de validación. Por favor, verifica los datos ingresados.');
+            if (status === 400) {
+              errorMessage = 'Datos de registro inválidos. Por favor, verifica la información.';
+            } else if (status === 409) {
+              errorMessage = 'El correo electrónico ya está registrado.';
+            } else if (status === 500) {
+              errorMessage = 'Error interno del servidor. Por favor, inténtalo de nuevo más tarde.';
+            } else if (data?.detail) {
+              errorMessage = data.detail;
+            }
           }
-        } else {
-          setError(`Error del servidor: ${status} ${data.detail || data.message || 'Error desconocido'}`);
+        } else if ('message' in err && typeof err.message === 'string') {
+          // Manejar errores con mensaje
+          errorMessage = err.message;
         }
-      } else if (error.request) {
-        setError('No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet.');
-      } else {
-        setError(error.message || 'Error al procesar la solicitud');
       }
       
-      toast.error('Error al registrar el usuario');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -191,6 +189,24 @@ export default function RegisterForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="gender">Género</Label>
+              <select
+                id="gender"
+                {...register('gender')}
+                disabled={loading}
+                className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="other">Prefiero no decirlo</option>
+                <option value="male">Masculino</option>
+                <option value="female">Femenino</option>
+              </select>
+              {errors.gender && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.gender.message}
+                </p>
+              )}
+            </div>
             <div>
               <Label htmlFor="street_address">Dirección</Label>
               <Input

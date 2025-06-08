@@ -20,9 +20,9 @@ const nextConfig = {
 
   // Variables de entorno
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://tacosborabora-backend.vercel.app',
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://tacosborabora.com',
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://api.tacosborabora.com',
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://www.tacosborabora.com',
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'your-secret-key', // Asegúrate de configurar esto en producción
     NEXTAUTH_DEBUG: process.env.NODE_ENV === 'development' ? '1' : '0',
   },
 

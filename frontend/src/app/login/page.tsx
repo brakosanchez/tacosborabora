@@ -1,31 +1,52 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
-import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const auth = useAuth();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      await auth.login(formData.email, formData.password);
-      router.push('/');
+      const result = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error('Error en el inicio de sesión:', result.error);
+        throw new Error('Credenciales inválidas. Por favor, verifica tu correo y contraseña.');
+      }
+
+      // Si el inicio de sesión fue exitoso, redirigir al usuario
+      if (result?.url) {
+        router.push(callbackUrl);
+        router.refresh();
+      } else {
+        throw new Error('Error desconocido al iniciar sesión');
+      }
     } catch (err) {
+      console.error('Error en handleSubmit:', err);
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setIsLoading(false);
     }
   };
 

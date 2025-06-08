@@ -1,0 +1,26 @@
+# Herramientas de seguridad para desarrollo
+
+# Análisis de dependencias
+pip-audit>=2.5.0  # Escáner de vulnerabilidades en dependencias
+safety>=2.3.5      # Alternativa a pip-audit
+
+# Análisis estático de seguridad
+bandit>=1.7.4      # Busca vulnerabilidades comunes en código Python
+
+# Escaneo de seguridad
+dlint>=0.14.0      # Detección de código inseguro
+
+# Herramientas de pruebas de penetración
+sqlmap>=1.6.0      # Detección de inyección SQL
+
+# Herramientas de auditoría de seguridad
+# Nota: Estas herramientas deben usarse solo en entornos controlados
+# y con el debido permiso
+
+# Instalación recomendada:
+# pip install -r requirements-security.txt
+
+# Uso básico:
+# pip-audit  # Escanear dependencias
+# bandit -r .  # Analizar código Python
+# safety check  # Verificar vulnerabilidades conocidas

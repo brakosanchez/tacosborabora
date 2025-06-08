@@ -16,7 +16,7 @@ export default function MenuHamburguesa() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2"
+        className="flex items-center space-x-2 text-yellow-100 hover:text-yellow-300 transition-colors"
       >
         <svg
           className="w-6 h-6"
@@ -43,13 +43,13 @@ export default function MenuHamburguesa() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
+        <div className="absolute right-0 mt-2 w-48 bg-[#1a120b] border border-yellow-900 rounded-md shadow-lg z-50">
           <div className="py-1">
             {menuItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-yellow-100 hover:bg-yellow-900/30 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}

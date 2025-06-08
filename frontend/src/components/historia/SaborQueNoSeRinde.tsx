@@ -6,7 +6,7 @@ export default function SaborQueNoSeRinde() {
     <section className="py-16 bg-gradient-to-b from-dark-brown to-dark-brown/90 text-white relative overflow-hidden">
       {/* Patrón decorativo */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-[url('/tropical-pattern-2.png')] opacity-5" />
+        <div className="absolute inset-0 bg-[url('/images/tropical-pattern-2.png')] opacity-5" />
       </div>
       
       <div className="container mx-auto px-4 relative z-10">

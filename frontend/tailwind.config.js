@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,7 +9,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'yellow': '#FCB235',
+        'yellow': {
+          50: '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+          400: '#facc15',
+          500: '#eab308',
+          600: '#ca8a04',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12',
+          950: '#1a120b',
+        },
         'dark-brown': '#462F13',
         'vibrant-red': '#EF432E',
         'brick-red': '#D04D38',
@@ -35,10 +48,11 @@ module.exports = {
       fontFamily: {
         'bebas': ['var(--font-bebas)', 'sans-serif'],
         'yeseva': ['var(--font-yeseva)', 'serif'],
-        'unbounded': ['var(--font-unbounded)', 'sans-serif'],
-        sans: ['var(--font-unbounded)', 'sans-serif'],
+        sans: ['var(--font-bebas)', 'sans-serif'],
         serif: ['var(--font-yeseva)', 'serif'],
+        mono: ['monospace'],
         display: ['var(--font-bebas)', 'sans-serif'],
+        body: ['var(--font-bebas)', 'sans-serif'],
       },
       backgroundImage: {
         'tropical-pattern': "url('/images/tropical-pattern.png')",

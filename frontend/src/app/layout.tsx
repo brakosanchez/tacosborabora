@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Unbounded, Bebas_Neue, Yeseva_One } from 'next/font/google';
+import { Bebas_Neue, Yeseva_One } from 'next/font/google'; // Eliminada la importación de Unbounded
 import './globals.css';
 import dynamic from 'next/dynamic';
 
@@ -12,13 +12,6 @@ export { viewport };
 import MuiProvider from './_app';
 
 // Configuración de fuentes
-const unbounded = Unbounded({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-unbounded',
-  preload: true,
-});
-
 const bebas = Bebas_Neue({ 
   weight: '400',
   subsets: ['latin'],
@@ -49,19 +42,21 @@ export const metadata: Metadata = {
 const ClientLayout = dynamic(() => import('./client'), { ssr: false });
 
 // Este es un componente de servidor que envuelve al cliente
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Obtener la sesión del servidor
+  const { getServerSession } = await import('next-auth/next');
+  const session = await getServerSession();
+
   return (
-    <html lang="es" className={`h-full ${unbounded.variable} ${bebas.variable} ${yeseva.variable}`}>
-      <body className="min-h-screen flex flex-col font-unbounded bg-dark-brown text-white">
+    <html lang="es" className={`${bebas.variable} ${yeseva.variable} font-sans`}>
+      <body className="min-h-screen flex flex-col bg-gray-50">
         <MuiProvider>
-          <ClientLayout>
-            <div className="flex-grow">
-              {children}
-            </div>
+          <ClientLayout session={session}>
+            {children}
           </ClientLayout>
         </MuiProvider>
       </body>

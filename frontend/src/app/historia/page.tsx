@@ -40,7 +40,24 @@ export default function HistoriaPage() {
         html {
           scroll-behavior: smooth;
         }
+        body {
+          background-color: #1a120b; /* Color de fondo oscuro para la página */
+        }
       `}</style>
+      
+      {/* Fondo con blur para toda la página */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-fixed bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/fondoborabora.png)',
+            filter: 'blur(8px)',
+            transform: 'scale(1.1)'
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        </div>
+      </div>
       {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -50,9 +67,9 @@ export default function HistoriaPage() {
       >
         {/* Fondo con overlay */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/images/historia/hero-bg.jpg')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(/fondoborabora.png)' }} />
           <div className="absolute inset-0 bg-gradient-to-t from-dark-brown via-dark-brown/90 to-transparent" />
-          <div className="absolute inset-0 bg-[url('/texture.png')] opacity-10" />
+          <div className="absolute inset-0 bg-[url('/images/texture.png')] opacity-10" />
         </div>
         
         {/* Contenido */}
