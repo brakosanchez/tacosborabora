@@ -38,14 +38,14 @@ const features: Feature[] = [
 
 const FeaturesSection = () => {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-16 md:py-24 bg-black/40 backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bebas text-dark-brown mb-4">
-           🔥 Una experiencia que despierta tus sentidos 🔥
+          <h2 className="text-4xl md:text-5xl font-bebas text-yellow-400 mb-6">
+            Una experiencia que despierta tus sentidos
           </h2>
-          <div className="w-24 h-1 bg-yellow-700 mx-auto mb-6"></div>
-          <p className="text-lg md:text-xl text-gray-600">
+          <div className="w-32 h-1 bg-yellow-400 mx-auto mb-8"></div>
+          <p className="text-lg md:text-xl text-white/90 leading-relaxed">
             En Tacos Bora Bora fusionamos la auténtica cocina mexicana con la frescura de los sabores tropicales, 
             creando una experiencia única que te transportará a la Isla del Sabor.
           </p>
@@ -55,20 +55,20 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <MotionDiv 
               key={index}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
+              className="bg-white/5 backdrop-blur-sm rounded-xl p-6 hover:shadow-lg transition-all duration-300 border border-white/10 hover:border-yellow-400/30"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -5, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
             >
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-yellow-600 text-xl">
+              <div className="w-14 h-14 bg-yellow-400/10 rounded-full flex items-center justify-center mb-6">
+                <span className="text-yellow-400 text-2xl">
                   {feature.icon}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+              <p className="text-white/70 leading-relaxed">
                 {feature.description}
               </p>
             </MotionDiv>

@@ -23,12 +23,20 @@ const FeaturesSection = dynamic(() => import('@/components/home/FeaturesSection'
 
 const Home = () => {
   return (
-    <main className="min-h-screen bg-dark-brown">
-      <Suspense fallback={<Loading />}>
-        <Hero />
-        <FeaturesSection />
-      </Suspense>
-    </main>
+    <div className="min-h-screen bg-cover bg-center bg-fixed" 
+      style={{
+        backgroundImage: "url('/fondos/fondoelegante1.png')",
+      }}
+    >
+      <div className="min-h-screen bg-black/60">
+        <main className="relative">
+          <Suspense fallback={<Loading />}>
+            <Hero />
+            <FeaturesSection />
+          </Suspense>
+        </main>
+      </div>
+    </div>
   );
 };
 

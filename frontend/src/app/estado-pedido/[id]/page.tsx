@@ -57,85 +57,98 @@ export default function EstadoPedido() {
     fetchOrderStatus();
   }, [id]);
 
+  // Componente de fondo reutilizable
+  const BackgroundLayout = ({ children }: { children: React.ReactNode }) => (
+    <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed" 
+      style={{ backgroundImage: "url('/fondos/fondoelegante1.png')" }}>
+      <div className="fixed inset-0 -z-10 bg-black/60" />
+      {children}
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <BackgroundLayout>
         <Spinner className="w-12 h-12" />
-      </div>
+      </BackgroundLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <BackgroundLayout>
         <Alert type="error" message={error} />
-      </div>
+      </BackgroundLayout>
     );
   }
 
   if (!order) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <BackgroundLayout>
         <Alert type="error" message="Pedido no encontrado" />
-      </div>
+      </BackgroundLayout>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <div className="bg-white shadow sm:rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Estado del Pedido #{order.id}
-            </h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-              Estado actual: {order.status}
-            </p>
-          </div>
+    <BackgroundLayout>
+      <div className="w-full py-12 px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-3xl mx-auto">
+          <div className="bg-white/90 shadow-lg overflow-hidden sm:rounded-lg backdrop-blur-sm">
+            <div className="px-4 py-5 sm:p-6">
+              <div>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
+                  Estado del Pedido #{order.id}
+                </h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                  Estado actual: {order.status}
+                </p>
+              </div>
 
-          <div className="mt-6">
-            <h4 className="text-sm font-medium text-gray-900">Detalles del pedido</h4>
-            <div className="mt-4 space-y-4">
-              {order.items.map((item) => (
-                <div key={item.name} className="flex justify-between">
-                  <span>{item.name}</span>
-                  <span>{item.quantity} x ${item.price}</span>
+              <div className="mt-6">
+                <h4 className="text-sm font-medium text-gray-900">Detalles del pedido</h4>
+                <div className="mt-4 space-y-4">
+                  {order.items.map((item) => (
+                    <div key={item.name} className="flex justify-between">
+                      <span>{item.name}</span>
+                      <span>{item.quantity} x ${item.price}</span>
+                    </div>
+                  ))}
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="flex justify-between font-medium">
+                      <span>Total</span>
+                      <span>${order.total}</span>
+                    </div>
+                  </div>
                 </div>
-              ))}
-              <div className="border-t border-gray-200 pt-4">
-                <div className="flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>${order.total}</span>
+              </div>
+
+              <div className="mt-6">
+                <h4 className="text-sm font-medium text-gray-900">Información de entrega</h4>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500">
+                    Fecha de creación: {new Date(order.createdAt).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Entrega estimada: {new Date(order.estimatedDelivery).toLocaleString()}
+                  </p>
                 </div>
+              </div>
+
+              <div className="mt-6">
+                <Button
+                  onClick={() => {
+                    // Aquí iría la lógica para contactar al restaurante
+                    console.log('Contactando al restaurante...');
+                  }}
+                >
+                  Contactar al restaurante
+                </Button>
               </div>
             </div>
           </div>
-
-          <div className="mt-6">
-            <h4 className="text-sm font-medium text-gray-900">Información de entrega</h4>
-            <div className="mt-2">
-              <p className="text-sm text-gray-500">
-                Fecha de creación: {new Date(order.createdAt).toLocaleString()}
-              </p>
-              <p className="text-sm text-gray-500">
-                Entrega estimada: {new Date(order.estimatedDelivery).toLocaleString()}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Button
-              onClick={() => {
-                // Aquí iría la lógica para contactar al restaurante
-                console.log('Contactando al restaurante...');
-              }}
-            >
-              Contactar al restaurante
-            </Button>
-          </div>
         </div>
       </div>
-    </div>
+    </BackgroundLayout>
   );
 }

@@ -48,10 +48,20 @@ app = FastAPI(
 
 # Configuración de CORS
 origins = [
+    # Desarrollo local
     "http://localhost:3000",
-    "http://192.168.0.16:3000",
     "http://localhost:8000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+    
+    # Producción
+    "https://www.tacosborabora.com",
+    "https://tacosborabora.com",
+    "https://api.tacosborabora.com",
+    
+    # Red local (opcional, para desarrollo)
+    "http://192.168.0.16:3000",
+    "http://192.168.0.16:8000"
 ]
 
 # Headers permitidos
@@ -62,37 +72,47 @@ allowed_headers = [
     "Origin",
     "X-Requested-With",
     "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
 ]
 
+# Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=allowed_headers,
-    expose_headers=allowed_headers,
-    max_age=3600
+    allow_methods=["*"],  # Permitir todos los métodos
+    allow_headers=["*"],  # Permitir todos los headers
+    expose_headers=["*"],  # Exponer todos los headers
+    max_age=600  # Cachear la respuesta preflight por 10 minutos
 )
 
-# Agregar middleware para manejar las solicitudes OPTIONS
+# Middleware para manejar CORS
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
+    # Manejar solicitudes OPTIONS (preflight)
     if request.method == "OPTIONS":
         response = Response(
-            content=json.dumps({"detail": "Preflight request successful"}),
-            status_code=200,
+            content=json.dumps({"status": "preflight"}),
+            status_code=204,
             media_type="application/json"
         )
     else:
+        # Para solicitudes normales, procesar con la ruta correspondiente
         response = await call_next(request)
     
-    # Agregar encabezados CORS
-    origin = request.headers.get("origin")
+    # Obtener el origen de la solicitud
+    origin = request.headers.get("origin", "")
+    
+    # Si el origen está en la lista de permitidos, configurar los headers CORS
     if origin in origins:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
         response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Expose-Headers"] = "*"
+    
+    # Para desarrollo, puedes descomentar la siguiente línea para permitir cualquier origen
+    # response.headers["Access-Control-Allow-Origin"] = "*"
     
     return response
 

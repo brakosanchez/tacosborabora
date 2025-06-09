@@ -30,15 +30,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative">
-      {/* Fondo con imagen y capa oscura */}
-      <div className="fixed inset-0 -z-10">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/patternloginregister.png)' }}
-        />
-        <div className="absolute inset-0 bg-black/60" /> {/* Capa oscura al 60% de opacidad */}
-      </div>
+    <div className="min-h-screen pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative" style={{
+      backgroundImage: "url('/fondos/fondoelegante5.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      minHeight: '100vh',
+      padding: '2rem 0'
+    }}>
+      {/* Capa oscura para mejorar legibilidad */}
+      <div className="fixed inset-0 -z-10 bg-black/60" />
       <div className="max-w-md mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-yellow-400 mb-2">Iniciar Sesión</h1>

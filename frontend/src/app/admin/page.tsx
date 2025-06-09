@@ -2,8 +2,9 @@ import Card from '@/components/ui/Card';
 
 export default function AdminPage() {
   return (
-    <div className="container py-12">
-      <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 text-white">
+      <div className="container mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="p-6">
@@ -35,6 +36,7 @@ export default function AdminPage() {
           <p className="text-3xl font-bold text-primary-600">4.8/5</p>
           <p className="text-gray-600">Promedio de calificaciones</p>
         </Card>
+        </div>
       </div>
     </div>
   );

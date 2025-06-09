@@ -35,7 +35,15 @@ export default function HistoriaPage() {
   }, []);
 
   return (
-    <div className={`${styles.container} ${styles.globalVars}`}>
+    <div className={`${styles.container} ${styles.globalVars}`} style={{
+      backgroundImage: "url('/fondos/fondoelegante4.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      minHeight: '100vh',
+      padding: '2rem 0'
+    }}>
       <style jsx global>{`
         html {
           scroll-behavior: smooth;

@@ -1,16 +1,44 @@
 'use client';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  
   return (
-    <footer className="bg-dark text-white">
-      <div className="container py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+    <footer className="relative overflow-hidden">
+      {/* Fondo con imagen y overlay */}
+      <div 
+        className="absolute inset-0 -z-10 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/fondoborabora.png')",
+          filter: 'brightness(0.4)'
+        }}
+      />
+      <div className="container mx-auto px-4 py-16 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Contact Information */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Tacos Bora Bora</h3>
-            <p className="mb-2">Calle Alondras #410</p>
-            <p className="mb-2">Whatsapp: (55) 4965-5305</p>
-            <p>Horario: Lunes a Domingo: 9:00 AM - 4:00 PM</p>
+          <div className="space-y-4">
+            <h3 className="text-2xl font-bold text-yellow-400 font-bebas">Tacos Bora Bora</h3>
+            <div className="space-y-2">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 mt-0.5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Calle Alondras #410, Col. Del Valle, CDMX</span>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <a href="tel:525549655305" className="hover:text-yellow-400 transition-colors">(55) 4965-5305</a>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Lun - Dom: 9:00 AM - 4:00 PM</span>
+              </div>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -89,12 +117,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t border-gray-700 text-center space-y-2">
-          <p className="text-gray-400">
-            © {new Date().getFullYear()} Tacos Bora Bora. Todos los derechos reservados.
+        <div className="mt-16 pt-8 border-t border-white/20 text-center">
+          <p className="text-white/80">
+            {currentYear} Tacos Bora Bora. Todos los derechos reservados.
           </p>
-          <p className="text-gray-500 text-sm">
-            By Brako Sanchez
+          <p className="text-white/60 text-sm mt-2">
+            Desarrollado con ❤️ por <a href="https://instagram.com/brakosanchez" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:underline">Brako Sanchez</a>
           </p>
         </div>
       </div>

@@ -27,7 +27,7 @@ interface MenuItemProps {
 const MenuPage: React.FC = () => {
   // Estilos para el fondo con imagen y desenfoque
   const backgroundStyle: React.CSSProperties = {
-    backgroundImage: "url('/menubora.png')",
+    backgroundImage: "url('/fondos/fondoelegante2.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed',

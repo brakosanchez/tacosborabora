@@ -6,6 +6,7 @@ import { CssBaseline, useMediaQuery } from '@mui/material';
 import { lightTheme, darkTheme } from '../theme';
 import dynamic from 'next/dynamic';
 import { Toaster } from 'react-hot-toast';
+import { RecaptchaProvider } from '@/components/providers/RecaptchaProvider';
 
 // Importar componentes con carga dinámica
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
@@ -60,21 +61,26 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthSessionProvider>
-        <AuthProvider>
-          <OrderProvider>
-            <CartProvider>
-              <Navbar onThemeChange={toggleTheme} currentTheme={mode} />
-              <HealthCheck />
-              <Toaster position="top-right" />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
-          </OrderProvider>
-        </AuthProvider>
-      </AuthSessionProvider>
+      <RecaptchaProvider>
+        <AuthSessionProvider>
+          <AuthProvider>
+            <OrderProvider>
+              <CartProvider>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <Toaster position="top-right" />
+                  <HealthCheck />
+                  <Navbar onThemeChange={toggleTheme} currentTheme={mode} />
+                  <main className="flex-grow">
+                    {children}
+                  </main>
+                  <Footer />
+                </ThemeProvider>
+              </CartProvider>
+            </OrderProvider>
+          </AuthProvider>
+        </AuthSessionProvider>
+      </RecaptchaProvider>
     </ThemeProvider>
   );
 }
