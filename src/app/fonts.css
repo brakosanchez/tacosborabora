@@ -1,0 +1,16 @@
+/* 
+  Este archivo ahora está obsoleto ya que las fuentes
+  se cargan directamente en el head del documento para
+  una mejor compatibilidad con dispositivos móviles.
+  Ver: src/app/layout.tsx
+*/
+
+/* 
+  Nota: Las fuentes se cargan con font-display: swap
+  para asegurar que el texto sea visible inmediatamente
+  mientras se cargan las fuentes.
+  
+  Para forzar una recarga de las fuentes en el móvil,
+  se recomienda limpiar la caché del navegador o
+  usar una URL diferente para los archivos de fuentes.
+*/
