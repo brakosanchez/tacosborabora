@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { contactoSchema } from '@/lib/validators/contacto'
 
+export const runtime = 'nodejs'
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -29,6 +31,13 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error('POST /api/contact error:', error)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    const detail = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json(
+      {
+        error: 'Error interno del servidor',
+        ...(process.env.NODE_ENV !== 'production' ? { detail } : {}),
+      },
+      { status: 500 }
+    )
   }
 }
