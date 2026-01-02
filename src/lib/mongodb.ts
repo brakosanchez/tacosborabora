@@ -2,11 +2,16 @@ import 'server-only'
 
 import { MongoClient, type Db } from 'mongodb'
 
-const mongoUri = process.env.MONGODB_URI
-const databaseName = process.env.DATABASE_NAME
+function getMongoUri(): string {
+  const mongoUri = process.env.MONGODB_URI
+  if (!mongoUri) {
+    throw new Error('Missing env var: MONGODB_URI')
+  }
+  return mongoUri
+}
 
-if (!mongoUri) {
-  throw new Error('Missing env var: MONGODB_URI')
+function getDatabaseName(): string | undefined {
+  return process.env.DATABASE_NAME
 }
 
 type GlobalWithMongo = typeof globalThis & {
@@ -15,21 +20,17 @@ type GlobalWithMongo = typeof globalThis & {
 
 const globalWithMongo = global as GlobalWithMongo
 
-let clientPromise: Promise<MongoClient>
-if (!globalWithMongo._mongoClientPromise) {
-  const client = new MongoClient(mongoUri)
-  globalWithMongo._mongoClientPromise = client.connect()
-}
-if (!globalWithMongo._mongoClientPromise) {
-  throw new Error('MongoDB client promise was not initialized')
-}
-clientPromise = globalWithMongo._mongoClientPromise
-
 export async function getMongoClient(): Promise<MongoClient> {
-  return clientPromise
+  if (!globalWithMongo._mongoClientPromise) {
+    const client = new MongoClient(getMongoUri())
+    globalWithMongo._mongoClientPromise = client.connect()
+  }
+
+  return globalWithMongo._mongoClientPromise
 }
 
 export async function getDb(): Promise<Db> {
   const client = await getMongoClient()
+  const databaseName = getDatabaseName()
   return databaseName ? client.db(databaseName) : client.db()
 }
