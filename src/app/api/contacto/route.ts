@@ -16,6 +16,7 @@ export async function POST(request: Request) {
     }
 
     const db = await getDb()
+
     const doc = {
       ...parsed.data,
       createdAt: new Date(),
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('POST /api/contact error:', error)
+    console.error('POST /api/contacto error:', error)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }
