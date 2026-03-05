@@ -137,10 +137,15 @@ export default function ContactoPage() {
           >
             <h1 className="text-5xl md:text-7xl font-bebas text-bora-yellow mb-6 tracking-wider glow-title">CONTÁCTANOS</h1>
             <div className="divider-tropical my-8"></div>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto font-unbounded">
-            ¿Tienes alguna pregunta o comentario? Estamos aquí para ayudarte. 
-            Escríbenos y te responderemos lo antes posible.
-          </p>
+            <div className="text-lg text-gray-300 max-w-2xl mx-auto font-unbounded">
+              <p>
+                ¿Tienes alguna pregunta o comentario? Estamos aquí para ayudarte. 
+                Escríbenos y te responderemos lo antes posible.
+                <br /><br />
+                <span className="text-bora-yellow font-bold">⚠️ Nota importante:</span> Los jueves tenemos nuestro "Descanso Isleño" 🏝️, 
+                pero estamos atentos a tus mensajes para responderte cuando volvamos.
+              </p>
+            </div>
           </motion.div>
 
           <div className="grid grid-cols-1 gap-8">
@@ -342,8 +347,15 @@ export default function ContactoPage() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                 <h3 className="text-2xl font-bebas text-bora-yellow tracking-wider glow-title">UBICACIÓN</h3>
                 <div className="text-sm text-bora-yellow/80 font-unbounded text-center md:text-right">
-                  <p>Lunes a Viernes: 11:00 AM - 4:00 PM</p>
-                  <p>Sábado y Domingo: 9:00 AM - 4:00 PM</p>
+                  <p className="mb-1"><span className="text-bora-yellow font-bold">Lunes a Miércoles:</span> 11:00 AM - 4:00 PM</p>
+                  <p className="mb-1">
+                    <span className="text-bora-yellow font-bold">Jueves:</span> 
+                    <span className="text-bora-orange font-bold"> DESCANSO ISLEÑO 🏝️</span>
+                  </p>
+                  <p><span className="text-bora-yellow font-bold">Viernes a Domingo:</span> 9:00 AM - 4:00 PM</p>
+                  <div className="mt-2 text-xs text-bora-yellow/60">
+                    <p>🌺 Los jueves recargamos energía para darte el mejor sabor tropical</p>
+                  </div>
                 </div>
               </div>
               <div className="h-[600px] rounded-lg overflow-hidden">

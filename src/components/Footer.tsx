@@ -137,12 +137,23 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-bora-yellow/20">
           <div className="text-center">
             <h4 className="font-bebas text-lg text-bora-yellow mb-2">
-              HORARIOS
+              🌴 HORARIOS TROPICALES 🌴
             </h4>
-            <p className="text-gray-300 text-sm">
-              Lunes a Viernes: 11:00 AM - 4:00 PM<br />
-              Sábado y Domingo: 9:00 AM - 4:00 PM
-            </p>
+            <div className="bg-black/60 rounded-xl p-4 border border-bora-yellow/20 backdrop-blur-sm">
+              <p className="text-gray-300 text-sm mb-2">
+                <span className="text-bora-yellow font-bold">Lunes a Miércoles:</span> 11:00 AM - 4:00 PM
+              </p>
+              <p className="text-gray-300 text-sm mb-2">
+                <span className="text-bora-yellow font-bold">Jueves:</span> 
+                <span className="text-bora-orange font-bold animate-pulse"> DESCANSO ISLEÑO 🏝️</span>
+              </p>
+              <p className="text-gray-300 text-sm">
+                <span className="text-bora-yellow font-bold">Viernes a Domingo:</span> 9:00 AM - 4:00 PM
+              </p>
+              <div className="mt-3 text-xs text-bora-yellow/80">
+                <p>🌺 Los jueves recargamos energía para darte el mejor sabor tropical</p>
+              </div>
+            </div>
           </div>
         </div>
 
